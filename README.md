@@ -1,3 +1,10 @@
+## 📄 License / 开源协议
+
+本项目采用组合开源协议，对软件和硬件部分分别进行授权：
+
+* **Software / 软件部分** (如固件代码): 采用 [GNU General Public License v3.0 (GPL-3.0)](LICENSE-GPL) 授权。详细信息请参阅 `LICENSE-GPL` 文件。
+* **Hardware / 硬件部分** (如 PCB 设计、原理图、机械 3D 模型): 采用 [CERN Open Hardware Licence Version 2 - Strongly Reciprocal (CERN-OHL-S v2)](LICENSE-CERN) 授权。详细信息请参阅 `LICENSE-CERN` 文件。
+
 # DIY谐波赤道仪（已通电验证，待实拍测试）
 
 由于我厌倦了EQ3D赤道仪的沉重，我计划用更轻便的谐波赤道仪来替换它，然而市面上的谐波赤道仪价格太贵（与DIY的规格相比），所以这个项目就此诞生，谐波赤道仪能够在不牺牲性能的前提下，提供高精度、便携性和经济性
