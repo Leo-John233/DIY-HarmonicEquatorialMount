@@ -553,7 +553,7 @@ void loop2() {
         }
 
         // =========================================================
-        // 4. 智能记录锁死方向 (彻底解决静止打断死锁)
+        // 4. 智能记录锁死方向 (解决静止打断死锁)
         // =========================================================
         
         // --- Axis 1 智能判断 ---
@@ -637,7 +637,7 @@ void loop2() {
     autoPowerDownAxis2();
 #endif
 
-    // 0.01秒 轮询任务 -------------------------------------------------------------------------------------
+    // 0.01秒 轮询任务 
 #if TIME_LOCATION_SOURCE == GPS
     if ((PPS_SENSE == OFF || ppsSynced) && !tls.active && tls.poll()) {
       SerialGPS.end();
@@ -694,7 +694,7 @@ void loop2() {
 #endif
   }
 
-  // 最快轮询 (FASTEST POLLING) -----------------------------------------------------------------------------------
+  // 最快轮询 (FASTEST POLLING) 
 #if MODE_SWITCH_BEFORE_SLEW == OFF && AXIS1_DRIVER_MODEL == TMC_SPI
   autoModeSwitch();
 #endif
@@ -710,14 +710,14 @@ void loop2() {
 #endif
   if (!isSlewing()) nv.poll();
   
-  // 工作负载监控 (WORKLOAD MONITORING) -------------------------------------------------------------------------------
+  // 工作负载监控 (WORKLOAD MONITORING) 
   unsigned long this_loop_micros=micros();
   loop_time=(long)(this_loop_micros-last_loop_micros);
   if (loop_time > worst_loop_time) worst_loop_time=loop_time;
   last_loop_micros=this_loop_micros;
   average_loop_time=(average_loop_time*49+loop_time)/50;
 
-  // 1 秒定时任务 ------------------------------------------------------------------------------------
+  // 1 秒定时任务 
   unsigned long tempMs=millis();
   static unsigned long housekeepingTimer=0;
   if ((long)(tempMs-housekeepingTimer) > 1000L) {
@@ -770,7 +770,7 @@ void loop2() {
   #endif
 #endif
 
-    // 安全检查 (SAFETY CHECKS) -------------------------------------------------------------------------------------
+    // 安全检查 (SAFETY CHECKS)
     // 防止支架跟踪超过中天限制、超过 AXIS1_LIMIT_MAX 或超过 Dec 限制
     if (safetyLimitsOn) {
       // 检查是否超过 AXIS1_LIMIT_MIN 或 AXIS1_LIMIT_MAX
@@ -798,7 +798,7 @@ void loop2() {
     // 在切线臂模式下自动清除错误
     if (AXIS2_TANGENT_ARM == ON && (trackingState == TrackingSidereal && generalError == ERR_DEC)) generalError=ERR_NONE;
   } else {
-    // 命令处理 (COMMAND PROCESSING) --------------------------------------------------------------------------------
+    // 命令处理 (COMMAND PROCESSING) 
     processCommands();
   }
 }
