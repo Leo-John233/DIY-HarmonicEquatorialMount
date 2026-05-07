@@ -39,8 +39,8 @@
 
 > 📷 *参考图片：*
 > ![RA轴电机与刹车模块安装](https://github.com/LeoJohn233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC(15).jpg "RA轴电机与刹车模块安装")
-> ![RA轴电机与刹车模块安装](https://github.com/LeoJohn233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC%20(16).jpg "RA轴电机与刹车模块安装")
-> ![DEC轴电机安装](https://github.com/LeoJohn233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC%20(17).jpg "DEC轴电机安装")
+> ![RA轴电机与刹车模块安装](https://github.com/LeoJohn233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC(16).jpg "RA轴电机与刹车模块安装")
+> ![DEC轴电机安装](https://github.com/LeoJohn233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC(17).jpg "DEC轴电机安装")
 
 ### 3. RA轴纬度座法兰的组装
 1.  将RA轴法兰盘与连接轴A和连接轴B通过内六角螺丝连接
