@@ -82,8 +82,8 @@
 2.  依次将 TMC5160 驱动模块和 ESP32 主控板插接至对应排母，注意核对引脚方向，切勿插反。
 
 > 📷 *参考图片：*
-> ![PCB及驱动安装](https://github.com/LeoJohn233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC%20(18).JPG "PCB及驱动安装")
-> ![PCB及驱动安装](https://github.com/LeoJohn233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC%20(19).JPG "PCB及驱动安装")
+> ![PCB及驱动安装](https://github.com/LeoJohn233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC(18).JPG "PCB及驱动安装")
+> ![PCB及驱动安装](https://github.com/LeoJohn233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC(19).JPG "PCB及驱动安装")
 
 ### 2. 规范接线与理线
 为保证设备在野外环境与大电流驱动下的绝对稳定，本项目的接线有着严格的要求：
