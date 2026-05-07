@@ -116,8 +116,6 @@
 
 ## 🛠️ 机械部分组装指南
 
-请参阅 [Assembly.md](Assembly.md)
-
-组装教程展示没时间拍摄，后续会补充
+请参阅 [Assembly.md](https://github.com/LeoJohn233/DIY-Harmonic-Equatorial-Mount/blob/main/hardware/Assembly.md)
 
 每个组件都经过精心挑选或设计，以确保高机械精度和易于组装，从 CNC 加工的坚固铝制主体、25-100 谐波减速器，到步进电机和控制器的 3D 打印防护外壳，每一步都经过了严格的测试与指向模型校准，以实现亚角秒级的跟踪精度
