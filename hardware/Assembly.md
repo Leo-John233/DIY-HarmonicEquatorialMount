@@ -83,7 +83,7 @@
 
 > 📷 *参考图片：*
 > ![PCB及驱动安装](https://github.com/LeoJohn233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC(18).jpg "PCB及驱动安装")
-> ![PCB及驱动安装](https://github.com/LeoJohn233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC(19).JPG "PCB及驱动安装")
+> ![PCB及驱动安装](https://github.com/LeoJohn233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC(19).jpg "PCB及驱动安装")
 
 ### 2. 规范接线与理线
 为保证设备在野外环境与大电流驱动下的绝对稳定，本项目的接线有着严格的要求：
