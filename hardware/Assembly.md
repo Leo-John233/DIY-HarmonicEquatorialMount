@@ -26,9 +26,9 @@
 4.  将除去步骤2中的剩余的核心螺丝组件多余的部分拧入防松螺母，确保减速器与铝板之间的连接牢固且不会因振动而松动
 
 > 📷 *参考图片：*
-> ![安装谐波减速器](https://github.com/LeoJohn233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC%20(1).JPG)
-> ![安装谐波减速器](https://github.com/LeoJohn233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC%20(2).JPG)
-> ![安装谐波减速器](https://github.com/LeoJohn233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC%20(3).JPG)
+> ![安装谐波减速器](https://github.com/LeoJohn233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC%20(1).JPG "安装谐波减速器")
+> ![安装谐波减速器](https://github.com/LeoJohn233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC%20(2).JPG "安装谐波减速器")
+> ![安装谐波减速器](https://github.com/LeoJohn233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC%20(3).JPG "安装谐波减速器")
 
 ### 2. 传动部分的组合
 1.  将加工过的80齿轮2GT惰轮安装在减速器的输入轴上，确保惰轮与输入轴同轴心，使用内六角螺丝并按对角线顺序均匀拧紧，确保连接牢固且不会因振动而松动
