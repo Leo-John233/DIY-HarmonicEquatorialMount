@@ -106,6 +106,7 @@ Dual 25 的硬件逻辑专为标准的 OnStep 环境设计。
 
 > 📷 *参考图片：*
 > ![电控系统点亮与联机测试](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC%20(13).JPG "电控系统点亮与联机测试")
+> ![电控系统点亮与联机测试](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC%20(14).JPG "电控系统点亮与联机测试")
 
 ---
 
