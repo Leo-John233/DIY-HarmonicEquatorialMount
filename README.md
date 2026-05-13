@@ -25,7 +25,7 @@
 
 大家都很忙，祝您的“平价赤道仪”大卖，Peace & Love
 
-👉 **[奇文共赏：点击此处阅读“白嫖式创业奇才”的逆天聊天实录](https://github.com/LeoJohn233/DIY-Harmonic-Equatorial-Mount/tree/main/pictures/Chat%20history)**
+👉 **[奇文共赏：点击此处阅读“白嫖式创业奇才”的逆天聊天实录](https://github.com/LeoJohn-233/DIY-Harmonic-Equatorial-Mount/tree/main/pictures/Chat%20history)**
 
 ---
 # DIY谐波赤道仪（已通电验证，待实拍测试）
@@ -35,11 +35,11 @@
 # 项目描述
 
 自制谐波赤道仪的核心谐波减速器，是基于Leaderdriver拆机二手的工业谐波减速器(也适用于淘宝购买的同规格谐波减速器如“25-100”)
-![image.png](https://github.com/LeoJohn233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/3D-Views/1.png)
-![image.jpg](https://github.com/LeoJohn233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/3D-Views/3.jpg)
-![image.jpg](https://github.com/LeoJohn233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/3D-Views/5.JPG)
-![image.jpg](https://github.com/LeoJohn233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/3D-Views/4.jpg)
-![image.jpg](https://github.com/LeoJohn233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/3D-Views/2.jpg)
+![image.png](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/3D-Views/1.png)
+![image.jpg](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/3D-Views/3.jpg)
+![image.jpg](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/3D-Views/5.JPG)
+![image.jpg](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/3D-Views/4.jpg)
+![image.jpg](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/3D-Views/2.jpg)
 
 该项目旨在解决业余天文设备中的关键问题：
 - 成品支架价格高昂
@@ -110,12 +110,12 @@
 
 谐波赤道仪的主控搭载了 **ESP32-WROOM-32E (16MB)**，这款大容量核心不仅能轻松运行复杂的 [OnStep / OnStepX](https://onstep.groups.io/g/main/wiki) 固件，还为内置星表、高精度对位模型 (Pointing Model) 以及功能丰富的 Smart Web UI 留出了充足的存储空间
 
-请参阅 [Firmware_Setup.md](https://github.com/LeoJohn233/DIY-Harmonic-Equatorial-Mount/blob/main/software/Firmware_Setup.md) 获取完整的 `Config.h` 参数表及详细引脚映射
+请参阅 [Firmware_Setup.md](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/software/Firmware_Setup.md) 获取完整的 `Config.h` 参数表及详细引脚映射
 
 ---
 
 ## 🛠️ 机械部分组装指南
 
-请参阅 [Assembly.md](https://github.com/LeoJohn233/DIY-Harmonic-Equatorial-Mount/blob/main/hardware/Assembly.md)
+请参阅 [Assembly.md](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/hardware/Assembly.md)
 
 每个组件都经过精心挑选或设计，以确保高机械精度和易于组装，从 CNC 加工的坚固铝制主体、25-100 谐波减速器，到步进电机和控制器的 3D 打印防护外壳，每一步都经过了严格的测试与指向模型校准，以实现亚角秒级的跟踪精度
