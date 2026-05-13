@@ -25,7 +25,7 @@
 
 大家都很忙，祝您的“平价赤道仪”大卖，Peace & Love
 
-👉 **[奇文共赏：点击此处阅读“白嫖式创业奇才”的逆天聊天实录](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/tree/main/pictures/Chat%20history)**
+👉 **[奇文共赏：点击此处阅读“白嫖式创业奇才”的逆天聊天实录](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Chat%20history/readme.md)**
 
 ---
 # DIY谐波赤道仪（已通电验证，待实拍测试）
