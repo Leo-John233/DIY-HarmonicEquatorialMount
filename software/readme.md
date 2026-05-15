@@ -11,21 +11,32 @@
 在使用原生 OnStep 驱动谐波赤道仪时，面临以下严重的软硬件协同问题：
 
 1. **断电/待机溜车砸毁风险**：谐波减速器不具备物理离合，静摩擦力极小。若开机未建立绝对坐标时误触指令，或设备两端严重不平衡，极易导致断电溜车砸毁设备
+
 2. **LX200 协议通讯堵塞 (Log Flooding)**：在拦截未回零的危险指令时，若粗暴使用 return 掐断通讯或频繁触发 CE_PARKED 错误，会导致底层日志系统疯狂刷屏，撑爆 ESP32 的蓝牙缓存，致使 APP 按键指令严重卡顿（极高延迟）
+
 3. **N.I.N.A. 串口崩溃与幽灵跟踪**：强行返回非标准字符串会导致 ASCOM 驱动解析失败 (Parsing Error)；而拦截 GOTO 后，天文软件的预处理逻辑往往会强行唤醒恒星跟踪（幽灵跟踪）
+
 4. **原生寻零偏置严重受限**：原生 Home Offset 采用角秒单位，补偿范围极小（不到 1°），而 DIY谐波赤道仪的光电传感器由于本身结构，导致实际回零位误差往往超过 1°，导致原生补偿直接失效，同时，原生寻零结束后不会自动回到绝对零点，操作割裂
+
+5. **核心逻辑解耦与传感器宏绑定 (Sensor Macro Binding)**：为了保证固件的普适性，开机防撞锁机制实现了与硬件配置的动态智能绑定，完美兼容了带有或不带有限位传感器的赤道仪
 
 ---
 
 ## ✨ 核心功能特性 (Key Features)
 1. **开机防溜车电子抱闸**：通电瞬间自动使能电机并进入静止状态，利用步进电机的保持转矩（Holding Torque）充当电子抱闸，防止重力滑落
+
 2. **复用 ST4 物理一键回零**：外接实体按键长按 3 秒即可触发寻找零位（Find Home），附带硬件级防抖与电机脉冲屏蔽锁，防止回零过程被打断
+
 3. **LX200 协议深度静默拦截**：   
   - (1) GOTO 伪装拦截：开机未回零前拦截 GOTO，向 N.I.N.A. 返回标准3(Standby) 状态，优雅报错并强制关闭误唤醒的跟踪
   - (2) Tracking 防堵塞：未回零前拒绝开启跟踪，标准回复 0 (失败)，消除 APP 死等造成的蓝牙断连
   - (3) 方向键静默锁死：未回零或触发限位时，伪装成无错误 (CE_NONE) 并不予回复，实现零延迟、无日志溢出的丝滑手控拦截
 4. **限位智能脱困(Smart Escape)**：撞击限位后仅触发单次急停报警（防刷屏），智能记录并仅锁死撞击方向，允许向反方向安全逃离
-5. **寻零闭环全自动到位**：支持通过网页 UI 输入以“度 (Degrees)”为单位的无限位直观偏移量。寻零结束瞬间完成 EEPROM 读取与坐标静默篡改，并自动无缝唤醒 GOTO 引擎，平滑移动至绝对物理零位
+
+5. **寻零闭环全自动到位**：支持通过网页 UI 输入以“度 (Degrees)”为单位的无限位直观偏移量，寻零结束瞬间完成 EEPROM 读取与坐标静默篡改，并自动无缝唤醒 GOTO 引擎，平滑移
+动至绝对物理零位
+
+6. **动态宏判断解耦**：在 Globals.h 中，开机状态锁变量 systemHasHomed 直接与 Config.h 中的 HOME_SENSE 宏进行绑定
 
 ---
 
@@ -33,25 +44,20 @@
 
 ### 1. 开机自动使能电机防止“溜车”滑落
 
-**文件**: OnStep.ino (初始化逻辑段)
-**修改逻辑**: 针对谐波减速器断电易滑落的物理特性，在开机瞬间强制物理激活步进电机驱动器。
+- **文件**: `OnStep.ino` (初始化逻辑段)
+- **修改逻辑**: 在开机瞬间强制使能步进电机驱动器，产生保持转矩，充当电子抱闸，防止重力滑落。注意，这里不直接进入 Tracking 状态，而是保持在 TrackingNone，确保电机通电但不产生任何运动指令
 
 ```cpp
-    // --- [修改开始] 开机防滑落抱死 ---
-    // 1. 将状态设置为“TrackingNone”
-    // 作用：系统进入工作状态（Active），但不发送步进脉冲，电机保持绝对静止
-    trackingState = TrackingNone;
-    
-    // 2. 物理激活驱动器 
-    // 作用：拉低 EN 引脚，让电机通电产生保持转矩（Holding Torque），充当电子抱闸
-    enableStepperDrivers();
-    // --- [修改结束] ---
+// --- [修改开始] 开机防滑落抱死 ---
+    trackingState = TrackingNone;  // 系统进入Active状态，但不发脉冲，电机绝对静止
+    enableStepperDrivers();        // 物理激活驱动器，拉低 EN 引脚产生电子抱闸
+// --- [修改结束] ---
 ```
 
-### 2. 复用 ST4 接口实现物理“一键回零” (修改 `ST4` 逻辑)
+### 2. 复用 ST4 接口实现物理“一键回零”
 
-**定位**: 搜索 `void ST4()` 函数内部，定位到 `// standard hand control` 下方区域。
-**修改逻辑**: 巧妙利用闲置的 ST4 导星接口，外接物理按键（同时短接 East 和 West 引脚至 GND）。加入 `homingLockout` 防抖锁。
+- **文件**: `OnStep.ino` -> `void ST4()` 函数
+- **修改逻辑**: 巧妙利用闲置的 ST4 导星接口，外接物理按键(同时短接 East 和 West 引脚至 GND),加入 `homingLockout` 防抖锁
 
 ```cpp
   // standard hand control
@@ -103,8 +109,8 @@
 
 ### 3. 拦截 GOTO 并强制关闭跟踪 (修改 `Command.ino`)
 
-**定位**: 搜索 `if (command[1] == 'S' && parameter[0] == 0)` (处理 `:MS#` 指令处)
-**修改逻辑**: 伪装成待机状态 (`3`)，优雅弹窗，关闭跟踪，且不产生报错日志。
+- **文件**: `Command.ino` 搜索 `if (command[1] == 'S' && parameter[0] == 0)` (处理 `:MS#` 指令处)
+- **修改逻辑**: 伪装成待机状态 (`3`)，优雅弹窗，关闭跟踪，且不产生报错日志
 
 ```cpp
       // :MS#       Goto the Target Object
@@ -140,34 +146,28 @@
       } else
 ```
 
-### 4. 规范拦截开启跟踪消除闲置高延迟 (修改 `Command.ino`)
+### 4. 规范拦截开启跟踪消除闲置高延迟
 
-**定位**: 搜索 `if (command[0] == 'T'` 下方的 `if (command[1] == 'e') {` (即 `:Te#` 指令)
-**修改逻辑**: 强制规范回复 `0`，防止 APP 死等导致蓝牙崩溃。
+- **文件**: `Command.ino` 搜索 `if (command[0] == 'T'` 下方的 `if (command[1] == 'e') {` (即 `:Te#` 指令)
+- **修改逻辑**: 强制规范回复 `0`，防止 APP 死等导致蓝牙崩溃
 
 ```cpp
-        // :Te#       Tracking enable
-        if (command[1] == 'e') {
-          
-          // --- [新增] 必须标准回复 0，否则 APP 死等导致蓝牙崩溃！ ---
+// --- [新增] 必须标准回复 0，否则 APP 死等导致蓝牙崩溃！ ---
           if (!systemHasHomed) {
               reply[0] = '0'; // 明确告诉 APP 被拒绝了
               reply[1] = 0; 
               boolReply = false; 
               supress_frame = true; 
               commandError = CE_NONE; // 保持静默，不刷日志
-              return; 
-          }
-          // --------------------------------------------------------
-
-          if (isParked()) commandError=CE_PARKED; else
-          // ... [保留原有 trackingState 逻辑] ...
+              // 必须用 else 包裹原逻辑，不能直接 return 导致跳过发送步骤
+          } else {
+             // ... [保留原有 trackingState 逻辑] ...
 ```
 
-### 5. 拦截手动方向键实现零延迟静默锁 (修改 `Command.ino`)
+### 5. 拦截手动方向键实现零延迟静默锁死
 
-**定位**: 搜索 `:Me#` 或 `Move Telescope East or West`
-**修改逻辑**: 剥离 `return`，使用 `CE_NONE` 欺骗日志系统，实现静默锁死。
+- **文件**: `Command.ino` 搜索 `:Me#` 或 `Move Telescope East or West`
+- **修改逻辑**: 剥离 `return`，使用 `CE_NONE` 欺骗日志系统，实现静默锁死
 
 ```cpp
       // :Me# :Mw#  Move Telescope East or West at current guide rate
@@ -198,10 +198,10 @@
 ```
 
 
-### 6. 优化智能脱困与单次急停防刷屏 (修改 `OnStep.ino`)
+### 6. 优化智能脱困与单次急停防刷屏
 
-**定位**: 搜索 `loop2()` 中限位判断代码。
-**修改逻辑**: 移除易导致意外锁死的坐标推断逻辑，增加单次报错锁防刷屏。
+- **文件**:`OnStep.ino` 搜索 `loop2()` 中限位判断代码
+- **修改逻辑**: 移除易导致意外锁死的坐标推断逻辑，增加单次报错锁防刷屏
 
 ```cpp
 #if LIMIT_SENSE != OFF
@@ -222,13 +222,13 @@
         lastLimitTriggerTime = currentTime;
 
         // =========================================================
-        // 1. 【最高权限】回零模式保护拦截 (修复编译报错)
+        // 1. 【最高权限】回零模式保护拦截
         // =========================================================
-        // 使用全局函数 isHoming()。如果在寻找原点时撞击物理限位，执行最高级别硬刹车！
+        // 使用全局函数 isHoming() 如果在寻找原点时撞击物理限位，执行最高级别硬刹车
         if (isHoming()) {
             generalError = ERR_LIMIT_SENSE;
             stopSlewingAndTracking(SS_LIMIT_HARD); // 强行切断电机脉冲
-            return; // 立即退出。Home.ino 的 checkHome() 会自动侦测到脉冲被切断，并安全结束回零状态
+            return; // 立即退出 Home.ino 的 checkHome() 
         }
 
         // =========================================================
@@ -307,120 +307,125 @@
     }
 #endif
 ```
----
 
-## 📌 优化：谐波大角度寻零补偿与全自动对齐
 
-在完美解决了开机防溜车和防撞锁死之后，针对 DIY 谐波赤道仪的**物理零位标定**与**高减速比机械保护**，原生 OnStep 固件仍存在以下严重痛点：
+### 7. 修改 Globals.h (添加全局状态锁与传感器绑定)
 
-1. **原生补偿范围极度受限**：OnStep 原生的 `Home Offset` 采用“角秒”为单位，且底层宏定义（`HOME_OFFSET_RANGE_AXIS1`）将其死锁在几千角秒（通常不到 1°）以内,DIY 谐波赤道仪的光电传感器安装误差往往超过 1°，导致原生补偿直接失效报错
-2. **操作割裂且不连贯**：寻零完成（碰到传感器）后，赤道仪仅仅是停在触发点并重置内部坐标，必须依靠用户手动在星图软件中再次点击“GOTO 零位”才能回到绝对基准，极不优雅。
-3. **高减速比下的机械冲击**：谐波减速器（100:1）叠加同步带（1:4）产生极高的总减速比（400:1）,原生默认的 GOTO 加速度和限位急停距离过短，极易在起步和触发限位时对柔轮产生毁灭性的反冲剪切力
-
----
-
-## 🎯 进阶功能特性
-
-本补丁对 `Constants.h`、`AxisTile.cpp`、`Home.ino` 及 `Config.h` 进行了修改，实现了：
-
-* **UI 直观解锁**：在网页端提供以“度 (Degrees)”为单位的无限位直观偏移量输入，自动存储至 EEPROM。
-* **寻零闭环全自动到位**：寻零结束瞬间完成坐标静默篡改，并**自动无缝唤醒 GOTO 引擎**，一步倒车/前进至绝对物理零位。
-
----
-
-### 7. 分配寻零偏移量 EEPROM 存储地址 (修改 `Constants.h`)
-
-**定位**: 搜索 `// rotator base address` 所在区域。
-**修改逻辑**: 利用 `GSB` 尾部绝对安全的空闲内存块，为双轴偏移量分配浮点数（Float）存储地址，实现永久记忆。
+- **文件**：打开`Globals.h`
+- **修改逻辑**: 拉到 `Globals.h` 文件的最底部（在最后一行）
 
 ```cpp
-// offsets for the rotator
-#define EE_rotSpos                      0  // 4
-#define EE_rotBacklashPos               4  // 2
-#define EE_rotBacklash                  6  // 2
+// =========================================================
+// --- [自定义] 限位锁死与强制回零状态 ---
+int Axis1_LimitLock = 0;
+int Axis2_LimitLock = 0;
+unsigned long lastLimitTriggerTime = 0; 
 
+// 传感器动态宏绑定
+#if HOME_SENSE != OFF
+  bool systemHasHomed = false; // 启用了传感器：开机上锁，必须手动回零
+#else
+  bool systemHasHomed = true;  // 未启用传感器：开机直接解锁
+#endif
+// =========================================================
+```
+
+
+### 8. 分配寻零偏移量 EEPROM 存储地址
+
+- **文件**: `Constants.h`
+- **修改逻辑**: 在 `Constants.h` 中为双轴偏移量分配 EEPROM 存储地址
+```cpp
 // =========================================================
 // --- [核心修改] 新增：寻零偏移量 EEPROM 地址 ---
 // =========================================================
-// 利用 GSB 尾部的绝对安全空闲空间，避开所有系统内置参数
+// 利用 GSB 尾部的绝对安全空闲空间，完美避开所有系统内置参数
 #define EE_homeOffsetAxis1         GSB+182 // 占用 4 bytes (float)
 #define EE_homeOffsetAxis2         GSB+186 // 占用 4 bytes (float)
-
-// ---------------------------------------------------------------------------------------------------------------------------------
-// Unique identifier for the current initialization format for NV, do not change
-#define NV_INIT_KEY 915307551
 ```
 
 
-### 8. 网页端 UI 直观输入 (修改 AxisTile.cpp)
+### 9. 网页端 UI 直观输入偏移量 (度)
 
-**定位**: 搜索 sendAxisParams(&a, 1);（针对 Axis 1）和 sendAxisParams(&a, 2);（针对 Axis 2）。
-**修改逻辑**: 绕过原生的角秒级偏移量输入框，增加基于“度”的新输入控件，并利用 F() 宏和 L_HOME_OFFSET 实现多语言适配及内存优化。
+- **文件**: `AxisTile.cpp`
+- **修改逻辑**: 在 Axis 1 和 Axis 2 的参数配置界面中，增加以“度”为单位的寻零偏移量输入框，并支持多语言适配(并配合 `Command.ino` 中的 `:SHO1 / :SHO2` 指令解析存入 `EEPROM`)
+
 ```cpp
-sprintf_P(temp, html_configAxisMax, (int)a.max, 1, 0, 360, "&deg;,");
-            data.concat(temp);
-            www.sendContentAndClear(data);
-
-            // =========================================================
-            // --- [核心修改] 新增：轴 1 寻零偏移量输入框 (支持多语言翻译) ---
-            // =========================================================
-            data.concat(F("<br/><label>" L_HOME_OFFSET " (Deg):</label>&nbsp;<input type='number' name='ho1' step='0.01' style='width:5em;' placeholder='0.0'>"));
-            www.sendContentAndClear(data);
-            
-            sendAxisParams(&a, 1);
-
-            data.concat(F("<br /><button type='submit'>" L_UPLOAD "</button> "));
+// ================== 新增：轴1 寻零偏移量输入框 (支持翻译) ==================
+// 利用字符串拼接： "<br/><label>" + "与零位偏移:" + " (Deg):</label>..."
+#if HOME_OFFSET_AUTO_GOTO == ON
+sprintf_P(temp, PSTR("<br/>%s <input type='number' name='ho1' step='0.01' style='width:5em;' placeholder='0.0'>&deg;,"), L_HOME_OFFSET);
+data.concat(temp);
+www.sendContentAndClear(data);
+#endif
+// ================== 新增：轴2 寻零偏移量输入框 (支持翻译) ==================
+#if HOME_OFFSET_AUTO_GOTO == ON
+sprintf_P(temp, PSTR("<br/>%s <input type='number' name='ho2' step='0.01' style='width:5em;' placeholder='0.0'>&deg;,"), L_HOME_OFFSET);
+data.concat(temp);
+www.sendContentAndClear(data);
+#endif
+// ========================================================================
 ```
-*(注：Axis 2 处执行完全相同的修改，仅将 name='ho1' 改为 name='ho2'。后端数据提取逻辑由 Command.ino 承接)*
 
 
-### 9. 重写底层寻零闭环与自动 GOTO 补偿 (修改 Home.ino)
+### 10. 寻零闭环坐标篡改与自动 GOTO 补偿
 
-**定位**: 搜索 if (findHomeMode == FH_DONE && guideDirAxis1 == 0 && guideDirAxis2 == 0) 的寻零结束事件。
-**修改逻辑**: 拦截坐标初始化事件，挂起系统中断注入偏移量，并强制调用原生安全 goTo 接口完成闭环补偿。
+- **文件**: `Home.ino` -> `checkHome()` 的 `FH_DONE` 分支
+- **修改逻辑**: 在寻零结束事件中，注入 EEPROM 读取的偏移量，静默篡改坐标，并强制调用原生 GOTO 引擎实现全自动闭环对齐
 
 ```cpp
-#else    
-      // at the home position
-      initStartPosition();
-
-      // =========================================================
+// =========================================================
       // --- [核心修改] 寻零后执行坐标欺骗，并自动触发 GOTO 补偿 ---
       // =========================================================
-      // 1. 读取网页下发的偏移量 (度)
       float offsetDeg1 = nv.readFloat(EE_homeOffsetAxis1);
       float offsetDeg2 = nv.readFloat(EE_homeOffsetAxis2);
 
-      // 2. 数据防呆清洗 (防止未初始化 EEPROM 读出乱码导致电机暴走)
       if (isnan(offsetDeg1) || offsetDeg1 > 360.0 || offsetDeg1 < -360.0) offsetDeg1 = 0.0;
       if (isnan(offsetDeg2) || offsetDeg2 > 360.0 || offsetDeg2 < -360.0) offsetDeg2 = 0.0;
 
-      // 3. 挂起中断，执行最高优先级的坐标系静默平移
-      cli();
+      cli(); // 挂起中断，执行最高优先级的坐标系静默平移
       long offsetSteps1 = (long)((double)offsetDeg1 * axis1Settings.stepsPerMeasure);
       long offsetSteps2 = (long)((double)offsetDeg2 * axis2Settings.stepsPerMeasure);
-
-      posAxis1 -= offsetSteps1;
-      posAxis2 -= offsetSteps2;
-      targetAxis1.part.m -= offsetSteps1;
-      targetAxis2.part.m -= offsetSteps2;
+      posAxis1 -= offsetSteps1; posAxis2 -= offsetSteps2;
+      targetAxis1.part.m -= offsetSteps1; targetAxis2.part.m -= offsetSteps2;
       sei();
 
-      // 4. 恢复安全保护机制
       safetyLimitsOn = true;
       atHome = true;
 
-      // 5. 核心魔法：如果存在偏差，立刻唤醒闭环 GOTO，平滑补偿至物理绝对零点！
+      // 如果存在偏差，立刻唤醒闭环 GOTO，平滑补偿至物理绝对零点！
       if (offsetSteps1 != 0 || offsetSteps2 != 0) {
-          trackingState = TrackingNone; // 确保不进入恒星追踪逻辑
+          trackingState = TrackingNone; 
           goTo(homePositionAxis1, homePositionAxis2, homePositionAxis1, homePositionAxis2, PierSideEast);
       }
-      // =========================================================
-    #endif
-  }
 ```
+
+
+### 11. 修改 `Command.ino` (协议深度静默拦截)
+
+- **文件**: `Command.ino`
+- **修改逻辑**： 搜索 `if (command[1] == 'h')` (这是处理 `:Sh#` 指令的地方)，找到它对应的 `} else` 结尾，紧接着它的下面，插入自定义的 `:SHO` 指令：
+
+```cpp
+// ========================== 【自定义寻零偏移量接收】 =======================
+      if (command[1] == 'H' && parameter[0] == 'O') {
+        int axis = parameter[1] - '0';
+        float val = atof(&parameter[2]);
+        if (axis == 1) { 
+            nv.writeFloat(EE_homeOffsetAxis1, val);
+            boolReply = false;
+        } else if (axis == 2) { 
+            nv.writeFloat(EE_homeOffsetAxis2, val);
+            boolReply = false;
+        } else {
+            commandError = CE_CMD_UNKNOWN;
+        }
+      } else
+// =======================================================================
+```
+
 ---
 
 ## 💡 总结与建议
-
-经过上述修改，基于 OnStep 的谐波赤道仪如同加上了“物理级”的安全外骨骼。从开机通电的瞬间到未回零前的任何误操作，都被死死按在安全的边界内，且完美兼顾了 ASCOM 驱动和 LX200 协议的底层脾气。建议搭配 N.I.N.A. 等上位机软件使用时，养成开机首选 **Find Home** 的良好习惯，享受丝滑且安全的星空探索。
+经过上述深度修改，基于 OnStep 构建的谐波赤道仪如同加上了“物理级”的安全外骨骼,从开机通电的瞬间到未回零前的任何误操作，都被死死限制在安全的边界内，且完美兼顾了 ASCOM 驱动和 LX200 协议的底层特性（零延迟、无报错）
+- **日常使用建议**：搭配 N.I.N.A. 等上位机软件使用时，养成开机首选 Find Home (寻找原点) 的良好习惯，享受丝滑且绝对安全的星空探索之旅
