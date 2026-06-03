@@ -1,4 +1,7 @@
-[**🇨🇳 简体中文**](./README.md) | [**🇬🇧 English**](./README.EN.md)
+<div align="right">
+  <a href="./README.md"><img src="https://img.shields.io/badge/🌐_Language-简体中文-0052D4.svg?style=flat" alt="简体中文"></a>
+  <a href="./README.EN.md"><img src="https://img.shields.io/badge/🌐_Language-English-C8102E.svg?style=flat" alt="English"></a>
+</div>
 
 ## 📄 License / Open Source Agreement
 
@@ -88,7 +91,7 @@ All circuit schematics and PCB layouts—which feature strictly controlled safet
 
 ## 💻 Firmware Configuration and Flashing
 
-The main controller for the harmonic equatorial mount features an **ESP32-WROOM-32E (16MB)** module. This high-capacity core not only effortlessly runs the complex [OnStep / OnStepX](https://onstep.groups.io/g/main/wiki) firmware but also provides ample storage space for built-in star catalogs, high-precision pointing models, and a feature-rich Smart Web UI.
+The main controller for the harmonic equatorial mount features an **ESP32-WROOM-32UE (16MB)** module. This high-capacity core not only effortlessly runs the complex [OnStep / OnStepX](https://onstep.groups.io/g/main/wiki) firmware but also provides ample storage space for built-in star catalogs, high-precision pointing models, and a feature-rich Smart Web UI.
 
 Please refer to [Firmware_Setup.md](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/software/Firmware_Setup.md) for a complete list of `Config.h` parameters and detailed pin mappings.
 
