@@ -1,6 +1,6 @@
 <div align="center">
-  <a href="./README.md"><img src="https://img.shields.io/badge/Language-简体中文-0052D4.svg?style=flat&logo=googletranslate&logoColor=white" alt="简体中文"></a>
-  <a href="./README.EN.md"><img src="https://img.shields.io/badge/Language-English-C8102E.svg?style=flat&logo=googletranslate&logoColor=white" alt="English"></a>
+  <a href="./README.md"><img src="https://img.shields.io/badge/简体中文-0052D4.svg?style=flat&logo=googletranslate&logoColor=white" alt="简体中文"></a>
+  <a href="./README.EN.md"><img src="https://img.shields.io/badge/English-C8102E.svg?style=flat&logo=googletranslate&logoColor=white" alt="English"></a>
 </div>
 
 ## 📄 License / 开源协议
