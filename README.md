@@ -1,7 +1,6 @@
 <div align="center">
-  <a href="./README.md"><kbd>🇨🇳 简体中文</kbd></a>
-  &nbsp; | &nbsp;
-  <a href="./README.EN.md"><kbd>🇬🇧 English</kbd></a>
+  <a href="./README.md"><img src="https://img.shields.io/badge/📕_Language-简体中文-0052D4.svg?style=flat" alt="简体中文"></a>
+  <a href="./README.EN.md"><img src="https://img.shields.io/badge/📕_Language-English-C8102E.svg?style=flat" alt="English"></a>
 </div>
 
 ## 📄 License / 开源协议
