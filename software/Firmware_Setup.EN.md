@@ -119,18 +119,16 @@ Open your computer's CMD (Command Prompt). Using the tools you have prepared, en
 
 **Option A: Use `esptool.exe` (Windows standalone program)**
 First, type `D:` and press Enter (switch to drive D), then execute:
-
-``bash
+```bash
 esptool.exe -p COM7 -b 115200 --before no_reset write_flash 0x00000 wifi.bin
 ```
 
 **Option B: Use Python's `esptool.py`**
 Execute directly in CMD:
-
-``bash
+```bash
 python -m esptool -p COM7 -b 115200 --before no_reset write_flash 0x00000 D:\wifi.bin
-
-``` * *Note: Remove the jumper cap after flashing.
+``` 
+* *Note: Remove the jumper cap after flashing.
 
 ## Step 3: Re-upload OnStep Core Firmware
 
