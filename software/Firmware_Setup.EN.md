@@ -151,5 +151,4 @@ python -m esptool -p COM7 -b 115200 --before no_reset write_flash 0x00000 D:\wif
 * *(If using PlatformIO, please click the ant icon on the left and run the `Upload File System image` task.)*
 
 > ⚠️
-
 **Initial Startup and Security Verification:** After flashing, the main controller will create a Wi-Fi hotspot named `OnStep` (default password is usually `password`) upon first boot. After connecting, enter `192.168.0.1` in your browser to access the control panel. **Strongly recommended:** Perform an no-load test before mounting an expensive telescope! Carefully verify the current settings of the TMC5160 driver, the direction of motor rotation, and the trigger status of the limit switches to ensure that the high-torque harmonic reducer will not damage the mechanical structure.
