@@ -93,12 +93,12 @@ All circuit schematics and PCB layouts—which feature strictly controlled safet
 
 The main controller for the harmonic equatorial mount features an **ESP32-WROOM-32UE (16MB)** module. This high-capacity core not only effortlessly runs the complex [OnStep / OnStepX](https://onstep.groups.io/g/main/wiki) firmware but also provides ample storage space for built-in star catalogs, high-precision pointing models, and a feature-rich Smart Web UI.
 
-Please refer to [Firmware_Setup.md](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/software/Firmware_Setup.md) for a complete list of `Config.h` parameters and detailed pin mappings.
+Please refer to [Firmware_Setup.EN.md](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/software/Firmware_Setup.md) for a complete list of `Config.h` parameters and detailed pin mappings.
 
 ---
 
 ## 🛠️ Mechanical Assembly Guide
 
-Please refer to [Assembly.md](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/hardware/Assembly.EN.md)
+Please refer to [Assembly.EN.md](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/hardware/Assembly.EN.md)
 
 Every component has been meticulously selected or designed to ensure high mechanical precision and ease of assembly—from the robust, CNC-machined aluminum body and the 25:100 harmonic drive reducer, to the 3D-printed protective enclosures for the stepper motors and controllers. Each stage has undergone rigorous testing and pointing model calibration to achieve sub-arcsecond tracking accuracy.
