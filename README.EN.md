@@ -99,6 +99,6 @@ Please refer to [Firmware_Setup.md](https://github.com/Leo-John233/DIY-Harmonic-
 
 ## 🛠️ Mechanical Assembly Guide
 
-Please refer to [Assembly.md](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/hardware/Assembly.md)
+Please refer to [Assembly.md](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/hardware/Assembly.EN.md)
 
 Every component has been meticulously selected or designed to ensure high mechanical precision and ease of assembly—from the robust, CNC-machined aluminum body and the 25:100 harmonic drive reducer, to the 3D-printed protective enclosures for the stepper motors and controllers. Each stage has undergone rigorous testing and pointing model calibration to achieve sub-arcsecond tracking accuracy.
