@@ -1,4 +1,9 @@
-# Dual 25 谐波赤道仪组装说明书
+<div align="center">
+  <a href="./README.md"><img src="https://img.shields.io/badge/简体中文-4285F4.svg?style=flat&logo=googletranslate&logoColor=white" alt="简体中文"></a>
+  <a href="./README.EN.md"><img src="https://img.shields.io/badge/English-4285F4.svg?style=flat&logo=googletranslate&logoColor=white" alt="English"></a>
+</div>
+
+# Dual 25-100 谐波赤道仪组装说明书
 
 结合 `pictures/Assembly process` 目录下的实拍记录，分步讲解从机械结构到电控系统的完整拼装过程
 
