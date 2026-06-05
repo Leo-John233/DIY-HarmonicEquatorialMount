@@ -113,16 +113,15 @@ You need `esptool.py` in your Python environment or the compiled standalone prog
 
 5. 🛑 **Turn off the serial monitor! **(This step is extremely important; the COM port must be released for esptool to use in the next step)**
 
-**Step Two: Execute the "No Reset" Flash Command**
+**Step 2: Execute the "No Reset" Flash Command**
 
-Open your computer's CMD (Command Prompt), and enter the following commands according to your prepared tools (assuming the file is on drive D and the port is `COM7`, please modify according to your actual situation):
+Open your computer's CMD (Command Prompt). Using the tools you have prepared, enter the following commands (assuming the file is on drive D and the port is `COM7`, please modify according to your actual situation):
 
 **Option A: Use `esptool.exe` (Windows standalone program)**
 First, type `D:` and press Enter (switch to drive D), then execute:
 
 ``bash
 esptool.exe -p COM7 -b 115200 --before no_reset write_flash 0x00000 wifi.bin
-
 ```
 
 **Option B: Use Python's `esptool.py`**
@@ -131,9 +130,9 @@ Execute directly in CMD:
 ``bash
 python -m esptool -p COM7 -b 115200 --before no_reset write_flash 0x00000 D:\wifi.bin
 
-* *Note: The jumper cap can be removed after flashing.
+``` * *Note: Remove the jumper cap after flashing.
 
-## Step 3: Re-upload the OnStep core firmware
+## Step 3: Re-upload OnStep Core Firmware
 
 1. Enable SPI communication mode in `Config.h` and disable `#define SERIAL_B_ESP_FLASHING`.
 
