@@ -146,7 +146,7 @@ python -m esptool -p COM7 -b 115200 --before no_reset write_flash 0x00000 D:\wif
 
 * **`-b 115200`**: **Must use low speed!** **Software pass-through cannot handle high baud rates such as 921600; the main controller's software serial port forwarding is prone to packet loss.**
 
-**`--before no_reset`:** This is a core parameter that tells the computer to "send data directly and do not attempt to restart the ESP32." This ensures the ESP32 remains in pass-through mode and obediently forwards data to the ESP07s.
+* **`--before no_reset`:** This is a core parameter that tells the computer to "send data directly and do not attempt to restart the ESP32." This ensures the ESP32 remains in pass-through mode and obediently forwards data to the ESP07s.
 
 * *(If using PlatformIO, please click the ant icon on the left and run the `Upload File System image` task.)*
 
