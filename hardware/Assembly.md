@@ -36,17 +36,17 @@
     | 6 | 光电传感器固定座 | `光电传感器固定座A.SLDPRT`，`光电传感器固定座B.SLDPRT`，`光电传感器固定座B - 增高.SLDPRT` |
 
 > 📷 *参考图片：*
-> ![3D打印件](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC%20(20).jpg "3D打印件")
-> ![3D打印件](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC%20(21).jpg "3D打印件")
-> ![3D打印件](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC%20(22).jpg "3D打印件")
+> ![3D打印件](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC(20).jpg "3D打印件")
+> ![3D打印件](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC(21).jpg "3D打印件")
+> ![3D打印件](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC(22).jpg "3D打印件")
 
 2. **给打印件熔入热熔螺母：**在组装前，先将准备好的热熔螺母熔入所有需要安装螺丝的3D打印件中，需要安装螺母的部位请参考下图中的标注，确保每个螺母都能牢固地固定在打印件中，并且位置准确，以便后续组装时能够顺利安装螺丝。
 
 > 📷 *参考图片：*
-> ![安装热熔螺母](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC%20(23).jpg "安装热熔螺母")
-> ![安装热熔螺母](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC%20(24).jpg "安装热熔螺母")
-> ![安装热熔螺母](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC%20(25).jpg "安装热熔螺母")
-> ![安装热熔螺母](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC%20(26).jpg "安装热熔螺母")
+> ![安装热熔螺母](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC(23).jpg "安装热熔螺母")
+> ![安装热熔螺母](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC(24).jpg "安装热熔螺母")
+> ![安装热熔螺母](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC(25).jpg "安装热熔螺母")
+> ![安装热熔螺母](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC(26).jpg "安装热熔螺母")
 
 3. **机加工：**对惰轮进行必要的改造，确保其尺寸和安装孔位符合设计要求，同时对铝板进行钻孔和攻丝，准备好安装所需的螺丝和铜柱。
 
@@ -102,9 +102,9 @@
 > ![RA轴电机与刹车模块，传感器，法兰盘的安装](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC%20(5).JPG "RA轴电机与刹车模块，传感器，法兰盘的安装")
 > ![DEC轴电机，同步带](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC%20(9).JPG "DEC轴电机，同步带")
 > ![DEC轴法兰盘的安装](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC%20(6).JPG "DEC轴法兰盘的安装")
-> ![传感器的安装](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC%20(27).JPG "传感器的安装")
-> ![传感器的安装](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC%20(28).JPG "传感器的安装")
-> ![传感器的安装](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC%20(29).JPG "传感器的安装")
+> ![传感器的安装](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC(27).jpg "传感器的安装")
+> ![传感器的安装](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC(28).jpg "传感器的安装")
+> ![传感器的安装](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC(29).jpg "传感器的安装")
 
 ### 5. 外壳的组装
 1.  将组装好RA轴和DEC轴的机械结构通过铝块连接，利用大理石水平面确保所有铝板都能够垂直正交安装并且不会发生干涉
