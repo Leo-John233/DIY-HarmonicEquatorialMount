@@ -22,21 +22,35 @@
 
 ## 🖨️ 阶段一：3D打印与机加工准备
 在正式组装之前，建议先完成以下准备工作：
-1. **3D打印**：使用PETG—GF/CF材料打印所有需要的零件，确保打印质量和尺寸精度，特别是减速器保护罩，传动轴，传感器安装座等关键部件。
+1. **3D打印：**使用PETG—GF/CF材料打印所有需要的零件，确保打印质量和尺寸精度，特别是减速器保护罩，传动轴，传感器安装座等关键部件。
 
-**打印件清单：**
+      **打印件清单：**
    
-   | 序号 | 零件部位 | 对应源文件 |
-   | :---: | :--- | :--- |
-   | 1 | 主外壳 | `外壳.SLDPRT` |
-   | 2 | 鸠尾槽外壳 | `鸠尾槽外壳.SLDPRT` |
-   | 3 | 赤纬 / 赤经轴 | `DEC轴.SLDPRT` , `RA轴.SLDPRT` |
-   | 4 | 鸠尾槽外壳 | `鸠尾槽外壳.SLDPRT` |
-   | 5 | 控制板盖板 | `控制板盖板-插件.SLDPRT` |
+    | 序号 | 零件部位 | 对应源文件 |
+    | :---: | :--- | :--- |
+    | 1 | 主外壳 | `外壳.SLDPRT` |
+    | 2 | 鸠尾槽外壳 | `鸠尾槽外壳.SLDPRT` |
+    | 3 | 赤纬 / 赤经轴 | `DEC轴.SLDPRT` , `RA轴.SLDPRT` |
+    | 4 | 鸠尾槽外壳 | `鸠尾槽外壳.SLDPRT` |
+    | 5 | 控制板盖板 | `控制板盖板-插件.SLDPRT` |
+    | 6 | 光电传感器固定座 | `光电传感器固定座A.SLDPRT`，`光电传感器固定座B.SLDPRT`，`光电传感器固定座B - 增高.SLDPRT` |
 
-2. **机加工**：对惰轮进行必要的改造，确保其尺寸和安装孔位符合设计要求，同时对铝板进行钻孔和攻丝，准备好安装所需的螺丝和铜柱。
+> 📷 *参考图片：*
+> ![3D打印件](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC%20(20).jpg "3D打印件")
+> ![3D打印件](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC%20(21).jpg "3D打印件")
+> ![3D打印件](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC%20(22).jpg "3D打印件")
 
+2. **给打印件熔入热熔螺母：**在组装前，先将准备好的热熔螺母熔入所有需要安装螺丝的3D打印件中，需要安装螺母的部位请参考下图中的标注，确保每个螺母都能牢固地固定在打印件中，并且位置准确，以便后续组装时能够顺利安装螺丝。
 
+> 📷 *参考图片：*
+> ![安装热熔螺母](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC%20(23).jpg "安装热熔螺母")
+> ![安装热熔螺母](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC%20(24).jpg "安装热熔螺母")
+> ![安装热熔螺母](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC%20(25).JPG "安装热熔螺母")
+> ![安装热熔螺母](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC%20(26).JPG "安装热熔螺母")
+
+3. **机加工：**对惰轮进行必要的改造，确保其尺寸和安装孔位符合设计要求，同时对铝板进行钻孔和攻丝，准备好安装所需的螺丝和铜柱。
+
+---
 
 ## ⚙️ 阶段二：机械结构组装
 
