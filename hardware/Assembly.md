@@ -22,7 +22,7 @@
 
 ## 🖨️ 阶段一：3D打印与机加工准备
 在正式组装之前，建议先完成以下准备工作：
-1. **3D打印：**使用PETG—GF/CF材料打印所有需要的零件，确保打印质量和尺寸精度，特别是减速器保护罩，传动轴，传感器安装座等关键部件。
+1.  **3D打印：**使用PETG—GF/CF材料打印所有需要的零件，确保打印质量和尺寸精度，特别是减速器保护罩，传动轴，传感器安装座等关键部件。
 
       **打印件清单：**
    
@@ -40,7 +40,7 @@
 > ![3D打印件](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC(21).jpg "3D打印件")
 > ![3D打印件](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC(22).jpg "3D打印件")
 
-2. **给打印件熔入热熔螺母：**在组装前，先将准备好的热熔螺母熔入所有需要安装螺丝的3D打印件中，需要安装螺母的部位请参考下图中的标注，确保每个螺母都能牢固地固定在打印件中，并且位置准确，以便后续组装时能够顺利安装螺丝。
+2.  **给打印件熔入热熔螺母：**在组装前，先将准备好的热熔螺母熔入所有需要安装螺丝的3D打印件中，需要安装螺母的部位请参考下图中的标注，确保每个螺母都能牢固地固定在打印件中，并且位置准确，以便后续组装时能够顺利安装螺丝。
 
 > 📷 *参考图片：*
 > ![安装热熔螺母](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC(23).jpg "安装热熔螺母")
@@ -48,7 +48,7 @@
 > ![安装热熔螺母](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC(25).jpg "安装热熔螺母")
 > ![安装热熔螺母](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC(26).jpg "安装热熔螺母")
 
-3. **机加工：**对惰轮进行必要的改造，确保其尺寸和安装孔位符合设计要求，同时对铝板进行钻孔和攻丝，准备好安装所需的螺丝和铜柱。
+3.  **机加工：**对惰轮进行必要的改造，确保其尺寸和安装孔位符合设计要求，同时对铝板进行钻孔和攻丝，准备好安装所需的螺丝和铜柱。
 
 ---
 
