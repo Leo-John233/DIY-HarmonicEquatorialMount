@@ -74,7 +74,7 @@
 
 ## 🔗 物料清单 (BOM)
 
-请参阅 [BOM.md](BOM.md)
+请参阅 [BOM.md](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/tree/main/BOM)
 
 **预计总成本：约2500RMB（含纬度座）**
 

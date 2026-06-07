@@ -3,7 +3,7 @@
   <a href="./Assembly.EN.md"><img src="https://img.shields.io/badge/English-4285F4.svg?style=flat&logo=googletranslate&logoColor=white" alt="English"></a>
 </div>
 
-# Dual 25-100 谐波赤道仪组装说明书
+# 双25-100谐波赤道仪组装说明书
 
 结合 `pictures/Assembly process` 目录下的实拍记录，分步讲解从机械结构到电控系统的完整拼装过程
 
