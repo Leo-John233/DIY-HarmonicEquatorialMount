@@ -52,7 +52,7 @@ This project has currently only reached the stage of power-on and simple "GoTo" 
 
 ## 🔗 Bill of Materials (BOM)
 
-Please refer to [BOM.md](BOM.md)
+Please refer to [BOM.md](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/tree/main/BOM)
 
 **Estimated Total Cost: Approx. 2500 RMB (including latitude base)**
 
