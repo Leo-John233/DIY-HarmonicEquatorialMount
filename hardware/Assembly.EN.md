@@ -104,10 +104,10 @@ In this step, we will install the core components of the equatorial mount. Consi
 7. Install the flange of the RA/DEC shaft, ensuring it is coaxial with the shaft, and tighten it evenly with Allen screws to ensure the flange does not shift or loosen during operation.
 
 > 📷 *Reference Image:*
-> ![RA shaft motor and brake module, sensor, flange installation][Assembly](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC%20(5).JPG "Installation of RA axis motor, brake module, sensor, and flange")
-[DEC axis motor, timing belt](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC%20(9).JPG "DEC axis motor, timing belt")
-[DEC axis flange installation](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC%20(6).JPG "DEC axis flange installation")
-![Sensor Installation](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC(27).jpg "Sensor Installation")
+> ![RA shaft motor and brake module, sensor, flange installation](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC%20(5).JPG "Installation of RA axis motor, brake module, sensor, and flange")
+> ![DEC axis motor, timing belt](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC%20(9).JPG "DEC axis motor, timing belt")
+> ![DEC axis flange installation](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC%20(6).JPG "DEC axis flange installation")
+> ![Sensor Installation](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC(27).jpg "Sensor Installation")
 > ![Sensor Installation](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC(28).jpg "Sensor Installation")
 > ![Sensor Installation](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Assembly%20process/DSC(29).jpg "Sensor Installation")
 
