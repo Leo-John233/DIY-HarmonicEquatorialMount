@@ -84,8 +84,7 @@ The control system features a completely custom design, built around a compact a
 * **Use Case:** Serves as a reliable low-level fallback solution. If you need to temporarily substitute standard A4988 or DRV8825 drivers, or if you choose to utilize the "Standalone" mode of the TMC drivers, this design offers exceptional hardware fault tolerance and ease of maintenance.
 * **Firmware Integration:** You must precisely enter the microstep values—as configured via jumper caps—into the `Config.h` file. Furthermore, you **must manually use a multimeter and a ceramic screwdriver** to adjust the VREF potentiometer on the driver board to set the motor current.
 
-> 💡 **Hardware Design Tip:** To ensure data integrity during high-speed SPI communication, we have implemented strict spacing controls for the relevant signal traces on our custom PCB.
-**Warning: Before inserting or removing driver modules, or altering jumper settings, you must completely disconnect the system's main power supply (including USB power) to prevent transient voltage surges from damaging the TMC5160 drivers or the ESP32 microcontroller.**
+> 💡**Warning: Before inserting or removing driver modules, or altering jumper settings, you must completely disconnect the system's main power supply (including USB power) to prevent transient voltage surges from damaging the TMC5160 drivers or the ESP32 microcontroller.**
 
 All circuit schematics and PCB layouts—which feature strictly controlled safety clearances, via dimensions, and high-current trace widths—were designed using open-source tools. You can order the PCBs directly from [JLC PCB](https://member.jlc.com/?spm=PCB.Homepage) or modify the designs to suit your specific requirements.
 
