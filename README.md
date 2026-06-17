@@ -10,6 +10,8 @@
 * **Software / 软件部分** (如固件代码): 采用 [GNU General Public License v3.0 (GPL-3.0)](LICENSE-GPL) 授权，详细信息请参阅 `LICENSE-GPL` 文件
 * **Hardware / 硬件部分** (如 PCB 设计、原理图、机械 3D 模型): 采用 [CERN Open Hardware Licence Version 2 - Strongly Reciprocal (CERN-OHL-S v2)](LICENSE-CERN) 授权，详细信息请参阅 `LICENSE-CERN` 文件
 
+若参考了该项目希望能够指明参考来源，注明原作者，保持开源精神，欢迎大家在此基础上进行改进和创新，但请勿将本项目的设计用于商业用途，除非您获得了明确许可
+
 ## 🛑 致各位试图拿本开源项目“创业”的商业奇才们
 
 欢迎来到本开源项目，在您准备拿着本仓库的图纸去开厂、量产、大赚一笔之前，请务必阅读以下《免责声明》
