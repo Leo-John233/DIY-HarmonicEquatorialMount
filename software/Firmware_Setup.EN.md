@@ -3,152 +3,130 @@
   <a href="./Firmware_Setup.EN.md"><img src="https://img.shields.io/badge/English-4285F4.svg?style=flat&logo=googletranslate&logoColor=white" alt="English"></a>
 </div>
 
-The harmonic equatorial mount uses the **ESP32-WROOM-32E16N (16MB flash version)** as its main controller. This high-capacity core can easily run complex [OnStep / OnStepX](https://onstep.groups.io/g/main/wiki) firmware.
+谐波赤道仪主控采用 **ESP32-WROOM-32E16N（16MB 闪存版）**。这款大容量核心能够稳定运行复杂的 [OnStep / OnStepX](https://onstep.groups.io/g/main/wiki) 固件。
 
-## ⚙️ Compilation Environment and Motherboard Settings (Critical)
+## ⚙️ 编译环境与主板设置（至关重要）
 
-Since we are using the 16MB version of the ESP32, **do not use the default 4MB compilation settings**, otherwise it will cause firmware compilation failure or waste a lot of storage space. The following is the official recommended configuration process based on the Arduino IDE (also applicable to PlatformIO users modifying `platformio.ini`):
+由于本项目使用的是 16MB 版本 ESP32，**请不要使用默认的 4MB 编译设置**，否则可能导致固件编译失败，或无法充分利用可用闪存空间。以下流程基于 Arduino IDE，同样适用于需要修改 `platformio.ini` 的 PlatformIO 用户。
 
-1. **Prepare the environment:** Download the latest version of the Arduino IDE and add the ESP32 board manager URL to "Preferences". Install the latest version of the ESP32 support package (version 2.0.0 is recommended for best compatibility).
+1. **准备环境**：下载最新版 Arduino IDE，在“首选项”中添加 ESP32 开发板管理器网址，并安装 ESP32 支持包（建议使用 2.0.0 版本以获得较好的兼容性）
+2. **选择主板**：在 `工具 (Tools)` -> `开发板 (Board)` 中选择 **ESP32 Dev Module**
+3. **关键参数配置**（请严格按照以下设置）：
+   * **Flash Size（闪存大小）**：选择 `16MB (128Mb)`
+   * **Partition Scheme（分区方案）**：选择适合 OnStep 的方案，例如 `16M Flash (3MB APP/9.9MB FATFS)` 或 `Huge APP`，以确保有足够空间存放 OnStep 的核心代码
+   * **PSRAM**：如果模块带有 PSRAM，请设为 `Enabled`；标准 32E 模块请保持 `Disabled`
+   * **Upload Speed（上传速度）**：选择 `921600`；如遇上传不稳定，可降至 `460800`
 
-2. **Select the board:** In `Tools` -> `Board`, select **ESP32 Dev Module**.
+## 📝 Config.h 核心参数适配
 
-3. **Configure key parameters:** (Strictly follow these settings):
+正式刷写前，需要在 OnStep 源码中修改 `Config.h`，使其精确适配当前硬件。可参考模板文件 `Config-5160.h` 和 `Config-2209.h`。
 
-* **Flash Size:** Select `16MB (128Mb)`
+**💡 提示：如果您复刻的机械结构与本项目完全一致，包括电机和谐波减速器规格，相关参数可以直接复制使用。**
 
-* **Partition Scheme:** Select a scheme optimized for OnStep, such as `16M Flash (3MB APP/9.9MB FATFS)` or `Huge APP`. This ensures sufficient space to store OnStep's large core codebase.
+* **引脚映射 (Pinmap)**：找到并启用与本定制 PCB 匹配的引脚定义方案，确保通讯走线、步进脉冲接口（STEP/DIR）以及限位开关等接口映射正确
+* **每度步数配置 (Steps per Degree)**：
+  * 核心计算公式：`(电机每圈物理步数 × 细分数 × 总减速比) / 360`
+  * 以标准 1.8° 步进电机（每圈 200 步）和 1:100 的 25 规格谐波减速器为例，具体数值取决于所使用的驱动器模式
 
-* **PSRAM**: If your module has PSRAM, please set it to `Enabled`; for standard 32E modules, please keep it `Disabled`.
+* **模式 A：TMC5160 SPI 智能模式（推荐 🚀）**：
+  * **驱动器型号**：将赤经轴（RA）和赤纬轴（Dec）严格定义为 `TMC5160_SPI`
+  * **细分设置**：建议设为 **64** 或 **128**。TMC 会在底层自动插值到 256 微步，以获得更平滑的恒星跟踪效果
+  * **参数示例**：若使用 64 细分，计算结果为 `(200 × 64 × 100) / 360 ≈ 3555.556`。请将 `3555.556` 填入 `AXIS1_STEPS_PER_DEGREE` 和 `AXIS2_STEPS_PER_DEGREE`
 
-* **Upload Speed**: `921600` (can be reduced to `460800` if unstable).
+* **模式 B：传统 STEP/DIR 模式（向下兼容 🔌）**：
+  * **驱动器型号**：如果通过跳线断开 SPI，并使用 A4988、DRV8825 或独立模式的 TMC 驱动器，请将驱动型号修改为对应类型，例如 `A4988` 或 `GENERIC`
+  * **细分严格匹配**：⚠️ 固件中的 `AXIS_MICROSTEPS` **必须严格等于**主板跳线帽设定的物理细分值。传统 STEP/DIR 模式下，固件无法动态修改细分
+  * **参数示例**：若物理跳线设为 32 细分，计算结果为 `(200 × 32 × 100) / 360 ≈ 1777.778`。请将该数值填入对应的步数参数
+  * **⚡ 电流设置（手动调节）**：传统模式下，OnStep 无法通过软件控制电流。请在主板通电状态下使用万用表测量，并使用陶瓷十字螺丝刀极其缓慢地旋转驱动器模块上的电位器，以设定 VREF 参考电压。**操作时务必小心，避免短路！**
 
-## 📝 Config.h Core Parameter Adaptation
+### 🚀 刷写固件与上传 Web UI
 
-Before the actual flashing, you need to modify `Config.h` in the OnStep source code to accurately adapt to the hardware. Refer to `Config-5160.h` and `Config-2209.h` templates.
+OnStep 在 ESP32 平台上的完整安装包含**两个独立步骤**：上传核心固件和上传文件系统。两者缺一不可。以下流程以使用 TMC5160 驱动为例。
 
-**💡: If your replicated mechanical and structural design (including motor and harmonic reducer specifications) is exactly the same as this project, the relevant parameters can be directly copied and flashed.**
+## 第一步：上传 OnStep 核心固件
 
-* **Pin Mapping**: Find and enable the pin definition scheme that matches this custom PCB, ensuring correct mapping of communication traces, stepper pulses (STEP/DIR), and limit switches.
+1. 使用优质数据线连接主控板。系统通讯依赖板载 CP2102GMR 芯片，请确保已安装 Silicon Labs 官方驱动
+2. 在 IDE 中选择对应的 COM 端口，点击“上传 (Upload)”
+3. 先在 `Config.h` 中关闭 SPI 通讯模式，以避免因本 PCB 共用 I/O 口而导致报错，并为后续刷写 ESP07S 做准备
+   * *注：如果终端出现 `Connecting...` 超时，请按住 PCB 上的 `BOOT` 按钮，直到上传进度条出现*
 
-* **Steps per Degree Configuration**:
+## 第二步：上传 Smart Web Server
 
-* Core calculation formula: `(Physical steps per motor revolution × Subdivision × Total reduction ratio) / 360`, to match a standard 1.8° stepper motor (200 steps per revolution) and a 1:100 reduction ratio of 25... Taking a harmonic reducer as an example, the specific values ​​depend on the driver mode you are using:
+通过 Wi-Fi 控制 OnStep 依赖存储在 ESP07S 闪存中的网页文件。由于 PCB 设计紧凑，没有为 ESP07S 预留独立刷写通道，因此需要将 ESP32 作为转发桥梁来完成 ESP07S 固件刷写。
 
-* **Mode A: TMC5160 SPI Smart Mode (Recommended 🚀)**:
-
-* **Driver Model**: Strictly define the right ascension (RA) and declination (Dec) axes as `TMC5160_SPI`.
-
-* **Microstepping Setting**: It is recommended to set it to **64** or **128** (TMC will automatically interpolate to 256 microsteps at the underlying level to ensure extremely smooth star stream tracing).
-
-* **Parameter Copies**: If using 64 microsteps, the calculation is `(200 × 64 × 100) / 360 ≈ 3555.556`. Please fill in `3555.556` in `AXIS1_STEPS_PER_DEGREE` and `AXIS2_STEPS_PER_DEGREE`
-
-* **Mode B: Traditional STEP/DIR Mode (Backward Compatible 🔌)**:
-
-* **Driver Model**: If SPI is disconnected via jumper and using A4988, DRV8825, or standalone TMC, please change the driver model to the corresponding model (e.g., `A4988` or `GENERIC`).
-
-* **Strict Microstepping Match**: ⚠️ The `AXIS_MICROSTEPS` in the firmware **must be strictly equal to** the physical microstepping value set by the motherboard jumper cap. The firmware cannot dynamically change the microstepping in this mode.
-
-* **Parameter Copying**: If the physical jumper is set to 32 microsteps, the calculation is `(200 × 32 × 100) / 360 ≈ 1777.778`. Please fill in this in the corresponding step parameter.
-
-* **⚡ Current Setting (Manual Adjustment)**: In traditional mode, OnStep cannot control current via software. You must use a multimeter to measure the current while the motherboard is powered on, and extremely slowly rotate the potentiometer on the driver module with a ceramic Phillips screwdriver to set the VREF reference voltage. **Please be extremely careful to prevent short circuits during operation!**
-
-### 🚀 Flashing Firmware and Uploading Web UI
-
-A complete installation of OnStep on the ESP32 platform consists of **two separate steps** (firmware + file system), both of which are essential. The following flashing process uses the TMC5160 driver as an example:
-
-## Step 1: Uploading OnStep Core Firmware
-1. Connect the main control board using a high-quality data cable. System communication relies on the onboard CP2102GMR chip. Please ensure that the official Silicon Labs driver is installed.
-
-2. In the IDE, select the corresponding COM port and click "Upload".
-
-3. First, disable the SPI communication mode in `Config.h` to prevent errors (this PCB design uses a shared I/O port) to prepare for flashing the ESP07S.
-
-* *Note: If the terminal displays a `Connecting...` timeout, please press and hold the `BOOT` button on the PCB until the progress bar appears. *
-
-## Step Two: Uploading the Smart Web Server
-Controlling OnStep's behavior via Wi-Fi relies on web page files stored in the ESP07S flash memory. Due to the compact PCB design, there is no dedicated flashing channel for the ESP07S; therefore, the ESP32 must be used as a forwarding bridge to flash the firmware.
-
-* *Note: When flashing the ESP32, the `#define SERIAL_B_ESP_FLASHING` function in `Config.h` must be enabled, and the corresponding RST pin on the PCB must be connected with a jumper cap.
+* *注：刷写 ESP32 时，需要在 `Config.h` 中打开 `#define SERIAL_B_ESP_FLASHING` 功能，并使用跳线帽连接 PCB 上对应的 RST 针脚*
 
 ---
 
-## 📡 ESP32 Pass-through Flashing Guide for ESP07s (SmartWebServer)
+## 📡 ESP32 透传刷写 ESP07S（SmartWebServer）指南
 
-Please strictly follow the following order; any mistake will result in flashing failure. If the replica's structural design is exactly the same, the parameters can be directly copied for flashing.
+请严格按照以下顺序操作。任何步骤错误都可能导致刷写失败。如果复刻结构与本项目完全一致，相关参数可以直接复制使用。
 
-**🛠️ Phase One: Preparation**
+**🛠️ 第一阶段：准备工作**
 
-To use command-line tools for flashing, we cannot directly upload the source code. We must first generate a firmware file in `.bin` format and prepare the corresponding flashing tool.
+为了使用命令行工具进行刷写，不能直接上传源码，需要先生成 `.bin` 格式的固件文件，并准备对应的刷写工具。
 
-**1. Prepare the WiFi Firmware File (.bin)**
+**1. 准备 WiFi 固件文件 (`.bin`)**
 
-1. Open the ESP8266 WiFi (SmartWebServer) source code in the Arduino IDE.
+1. 在 Arduino IDE 中打开 ESP8266 WiFi（SmartWebServer）源码
+2. 在 **工具 (Tools) -> 开发板 (Board)** 中选择 **`LOLIN (WeMos) D1 R2 & mini`**
+3. 点击菜单栏：**项目 (Sketch) -> 导出已编译的二进制文件 (Export Compiled Binary)**
+4. 在源码文件夹中找到刚刚生成的 `.bin` 文件，选择文件名最短的版本，例如 `SmartWebServer.bin`
+5. 将该文件复制到 `D 盘` 根目录，并改成简单文件名，例如 `wifi.bin`
 
-2. In **Tools -> Board**, select **LOLIN (WeMos) D1 R2 & mini**.
+**2. 准备刷写工具 (`esptool`)**
 
-3. Click the menu bar: **Sketch -> Export Compiled Binary**.
+需要准备 Python 环境下的 `esptool.py`，或编译好的独立程序 `esptool.exe`。
 
-4. Locate the generated `.bin` file in the source code folder (choose the shortest filename, such as `SmartWebServer.bin`). 5. Copy it to the root directory of drive D and rename it to something simple, such as `wifi.bin`
+* **如果已经安装 Python**：打开 CMD 命令提示符，输入 `pip install esptool` 即可完成安装
+* **如果没有安装 Python**：在 Arduino 安装目录中搜索 `esptool.exe`，并将其复制到 `D 盘` 根目录备用
 
-**2. Prepare the flashing tool (`esptool`)**
+**🚀 第二阶段：操作流程**
 
-You need `esptool.py` in your Python environment or the compiled standalone program `esptool.exe`
+**第一步：建立透传通道**
 
-* **If you have Python installed**: Open the CMD command prompt and type `pip install esptool` to complete the installation.
+1. 将包含 ESP32 的主控板通过 USB 连接至电脑
+2. 打开 Arduino 的 **串口监视器 (Serial Monitor)**
+3. 在发送框输入 `:ESPFLASH#`，然后点击发送
+4. **关键检查**：此时 OnStep 会根据预先定义的引脚自动拉低 IO26（WiFi IO0），随后拉低再拉高 IO2（WiFi RST）。如果这一步成功，ESP07S 应已进入“等待刷写”状态
+5. 🛑 **关闭串口监视器！** 这一步极其重要，必须释放 COM 口供下一步 `esptool` 使用
 
-* **If you don't have Python installed**: Search for `esptool.exe` in the Arduino installation directory and copy it to the root directory of drive D for later use.
+**第二步：执行“无复位”刷写指令**
 
-**🚀 Second Stage: Operation Process**
+打开电脑的 CMD（命令提示符），根据准备的工具输入以下命令。示例假设文件位于 D 盘，端口为 `COM7`，请按实际情况修改。
 
-**Step 1: Establish a Pass-through Channel**
+**选项 A：使用 `esptool.exe`（Windows 独立程序）**
 
-1. Connect the main control board containing the ESP32 to the computer via USB.
+先输入 `D:` 并回车，切换到 D 盘，然后执行：
 
-2. Open the Arduino's **Serial Monitor**.
-
-3. Enter `:ESPFLASH#` in the send box and click send.
-
-4. **Critical Check**: At this point, OnStep will automatically pull IO26 (WiFi) low according to the predefined pins. IO0), then pull IO2 low and then high (WiFi RST). If this step is successful, the ESP07s should now be in the "waiting to flash" state.
-
-5. 🛑 **Turn off the serial monitor! **(This step is extremely important; the COM port must be released for esptool to use in the next step)**
-
-**Step 2: Execute the "No Reset" Flash Command**
-
-Open your computer's CMD (Command Prompt). Using the tools you have prepared, enter the following commands (assuming the file is on drive D and the port is `COM7`, please modify according to your actual situation):
-
-**Option A: Use `esptool.exe` (Windows standalone program)**
-First, type `D:` and press Enter (switch to drive D), then execute:
 ```bash
 esptool.exe -p COM7 -b 115200 --before no_reset write_flash 0x00000 wifi.bin
 ```
 
-**Option B: Use Python's `esptool.py`**
-Execute directly in CMD:
+**选项 B：使用 Python 的 `esptool.py`**
+
+直接在 CMD 中执行：
+
 ```bash
 python -m esptool -p COM7 -b 115200 --before no_reset write_flash 0x00000 D:\wifi.bin
-``` 
-* *Note: Remove the jumper cap after flashing.
+```
 
-## Step 3: Re-upload OnStep Core Firmware
+* *注：刷写完成后即可取下跳线帽*
 
-1. Enable SPI communication mode in `Config.h` and disable `#define SERIAL_B_ESP_FLASHING`.
+## 第三步：重新上传 OnStep 核心固件
 
-2. Select the corresponding COM port in the IDE and click "Upload" to re-flash.
-
-3. After completing the above steps, the flashing is successful and the firmware is ready for use.
+1. 在 `Config.h` 中重新打开 SPI 通讯模式，并关闭 `#define SERIAL_B_ESP_FLASHING`
+2. 在 IDE 中选择对应的 COM 端口，点击“上传 (Upload)”重新刷写
+3. 完成以上步骤后，即可完成刷写并投入使用
 
 ---
 
-### 🔍 Parameter Details
+### 🔍 参数详解
 
-* **`-p COM7`**: Specifies the hardware port to connect to.
-
-* **`-b 115200`**: **Must use low speed!** **Software pass-through cannot handle high baud rates such as 921600; the main controller's software serial port forwarding is prone to packet loss.**
-
-* **`--before no_reset`:** This is a core parameter that tells the computer to "send data directly and do not attempt to restart the ESP32." This ensures the ESP32 remains in pass-through mode and obediently forwards data to the ESP07s.
-
-* *(If using PlatformIO, please click the ant icon on the left and run the `Upload File System image` task.)*
+* **`-p COM7`**：指定连接硬件的端口
+* **`-b 115200`**：**必须使用低速！** 软件透传无法承受 921600 等高速波特率，主控软串口转发时容易丢包
+* **`--before no_reset`**：**核心参数。** 它告诉电脑“直接发送数据，不要尝试重启 ESP32”，这样主控 ESP32 才能保持在透传模式，并将数据转发给 ESP07S
+* *(如果使用 PlatformIO，请点击左侧蚂蚁图标，运行 `Upload File System image` 任务。)*
 
 > ⚠️
-**Initial Startup and Security Verification:** After flashing, the main controller will create a Wi-Fi hotspot named `OnStep` (default password is usually `password`) upon first boot. After connecting, enter `192.168.0.1` in your browser to access the control panel. **Strongly recommended:** Perform an no-load test before mounting an expensive telescope! Carefully verify the current settings of the TMC5160 driver, the direction of motor rotation, and the trigger status of the limit switches to ensure that the high-torque harmonic reducer will not damage the mechanical structure.
+> **初始启动与安全校验：** 刷写完成后，主控板首次启动会建立一个名为 `OnStep` 的 Wi-Fi 热点（默认密码通常为 `password`）。连接后，在浏览器中输入 `192.168.0.1` 即可进入控制面板。**强烈建议：** 在挂载昂贵的望远镜之前，务必先进行空载测试，仔细验证 TMC5160 驱动器电流设置、电机运转方向，以及限位开关 (Limit Switches) 的触发状态，确保高扭矩谐波减速器不会对机械结构造成损坏
