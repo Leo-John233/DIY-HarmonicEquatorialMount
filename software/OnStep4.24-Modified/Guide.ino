@@ -150,15 +150,27 @@ CommandErrors startGuideAxis1(char direction, int guideRate, long guideDuration,
   if (trackingState == TrackingMoveTo)    return CE_MOUNT_IN_MOTION;
   if (isSpiralGuiding())                  return CE_MOUNT_IN_MOTION;
   if (direction == guideDirAxis1)         return CE_NONE;
+
+  bool escapingPhysicalLimitAxis1 = false;
+#if LIMIT_SENSE != OFF
+  // 物理限位锁只绑定 LIMIT_SENSE：危险方向禁止，反方向允许脱离。
+  if (direction == 'e' && Axis1_LimitLock == 1)  return CE_SLEW_ERR_OUTSIDE_LIMITS;
+  if (direction == 'w' && Axis1_LimitLock == -1) return CE_SLEW_ERR_OUTSIDE_LIMITS;
+
+  escapingPhysicalLimitAxis1 = (generalError == ERR_LIMIT_SENSE) &&
+                               ((direction == 'e' && Axis1_LimitLock == -1) ||
+                                (direction == 'w' && Axis1_LimitLock == 1));
+#endif
+
   if (direction == 'e' && !guideEastOk()) return CE_SLEW_ERR_OUTSIDE_LIMITS;
   if (direction == 'w' && !guideWestOk()) return CE_SLEW_ERR_OUTSIDE_LIMITS;
-  if (guideRate < 3 && (generalError == ERR_ALT_MIN ||
-                        generalError == ERR_LIMIT_SENSE ||
-                        generalError == ERR_DEC ||
-                        generalError == ERR_AZM ||
-                        generalError == ERR_UNDER_POLE ||
-                        generalError == ERR_MERIDIAN ||
-                        generalError == ERR_ALT_MAX)) return CE_SLEW_ERR_OUTSIDE_LIMITS;
+  if (!escapingPhysicalLimitAxis1 && guideRate < 3 && (generalError == ERR_ALT_MIN ||
+                                                       generalError == ERR_LIMIT_SENSE ||
+                                                       generalError == ERR_DEC ||
+                                                       generalError == ERR_AZM ||
+                                                       generalError == ERR_UNDER_POLE ||
+                                                       generalError == ERR_MERIDIAN ||
+                                                       generalError == ERR_ALT_MAX)) return CE_SLEW_ERR_OUTSIDE_LIMITS;
   
   if (guideRate < 3) deactivateBacklashComp(); else reactivateBacklashComp();
   enableGuideRate(guideRate);
@@ -187,15 +199,27 @@ CommandErrors startGuideAxis2(char direction, int guideRate, long guideDuration,
   if (trackingState == TrackingMoveTo)     return CE_MOUNT_IN_MOTION;
   if (isSpiralGuiding())                   return CE_MOUNT_IN_MOTION;
   if (direction == guideDirAxis2)          return CE_NONE;
+
+  bool escapingPhysicalLimitAxis2 = false;
+#if LIMIT_SENSE != OFF
+  // 物理限位锁只绑定 LIMIT_SENSE：危险方向禁止，反方向允许脱离。
+  if (direction == 'n' && Axis2_LimitLock == 1)  return CE_SLEW_ERR_OUTSIDE_LIMITS;
+  if (direction == 's' && Axis2_LimitLock == -1) return CE_SLEW_ERR_OUTSIDE_LIMITS;
+
+  escapingPhysicalLimitAxis2 = (generalError == ERR_LIMIT_SENSE) &&
+                               ((direction == 'n' && Axis2_LimitLock == -1) ||
+                                (direction == 's' && Axis2_LimitLock == 1));
+#endif
+
   if (direction == 'n' && !guideNorthOk()) return CE_SLEW_ERR_OUTSIDE_LIMITS;
   if (direction == 's' && !guideSouthOk()) return CE_SLEW_ERR_OUTSIDE_LIMITS;
-  if (guideRate < 3 && (generalError == ERR_ALT_MIN ||
-                        generalError == ERR_LIMIT_SENSE ||
-                        generalError == ERR_DEC ||
-                        generalError == ERR_AZM ||
-                        generalError == ERR_UNDER_POLE ||
-                        generalError == ERR_MERIDIAN ||
-                        generalError == ERR_ALT_MAX)) return CE_SLEW_ERR_OUTSIDE_LIMITS;
+  if (!escapingPhysicalLimitAxis2 && guideRate < 3 && (generalError == ERR_ALT_MIN ||
+                                                       generalError == ERR_LIMIT_SENSE ||
+                                                       generalError == ERR_DEC ||
+                                                       generalError == ERR_AZM ||
+                                                       generalError == ERR_UNDER_POLE ||
+                                                       generalError == ERR_MERIDIAN ||
+                                                       generalError == ERR_ALT_MAX)) return CE_SLEW_ERR_OUTSIDE_LIMITS;
 
   enableGuideRate(guideRate);
   if (guideRate < 3) deactivateBacklashComp(); else reactivateBacklashComp();

@@ -50,6 +50,10 @@
 int Axis1_LimitLock = 0; 
 int Axis2_LimitLock = 0;
 unsigned long lastLimitTriggerTime = 0; // [新增] 用于非阻塞消抖计时
+// GOTO 被限位/安全逻辑中断：用于阻止 MoveTo 把安全中断伪装成 GOTO done
+bool gotoAbortedBySafety = false;
+// 安全中断后坐标不再可信，必须重新回原点后才允许 GOTO
+bool gotoRequiresHomeAfterAbort = false;
 // 开机强制回零锁
 bool systemHasHomed = false; 
 // --- [修改结束] -----------------------
@@ -305,43 +309,73 @@ void setup() {
   setDeltaTrackingRate();
   initStartTimers();
   // 跟踪自动启动逻辑
+// 跟踪自动启动逻辑：只负责真正的 tracking autostart
 #if TRACK_AUTOSTART == ON
   #if MOUNT_TYPE != ALTAZM
 
-    // 根据 TLS（时间地点源）是否存在来调整行为
     if (!tls.active) {
       VLF("MSG: Tracking autostart - TLS/orientation unknown, limits disabled");
       setHome();
-      safetyLimitsOn=false;
+      safetyLimitsOn = false;
     } else {
       if (parkStatus != Parked) {
         VLF("MSG: Tracking autostart - TLS/orientation unknown, limits disabled");
         setHome();
-        safetyLimitsOn=false;
+        safetyLimitsOn = false;
       } else {
-        // 已停机（Parking）意味着支架的方向和位置已知
         VLF("MSG: Tracking autostart - assuming TLS/orientation are correct, limits enabled and automatic unpark");
         unPark(true);
       }
     }
 
-    // --- [修改开始] ---
-    // 1. 将状态设置为“TrackingNone”
-    // 作用：系统进入工作状态（Active），但不发送步进脉冲，电机保持静止
-    trackingState = TrackingNone;
-    // 2. 物理激活驱动器 
-    // 作用：拉低 EN 引脚
+    trackingState = TrackingSidereal;
     enableStepperDrivers();
-    // --- [修改结束] ---
 
   #else
     #warning "Tracking autostart ignored for MOUNT_TYPE ALTAZM"
   #endif
+
 #else
   if (parkStatus == Parked) {
     VLF("MSG: Restoring parked telescope pointing state");
     unPark(false);
   }
+#endif
+
+
+// 独立的开机电机保持逻辑：只使能电机，不 tracking，不 setHome
+#if MOTOR_HOLD_ON_BOOT == ON
+  #if MOUNT_TYPE != ALTAZM
+
+    VLF("MSG: Motor hold on boot - drivers enabled, tracking off, home required");
+
+    // 开机后不认为已经真实回原点
+    systemHasHomed = false;
+
+    // 开机清理上一次安全中断残留
+    gotoAbortedBySafety = false;
+    gotoRequiresHomeAfterAbort = false;
+
+    // 清理限位方向锁
+    Axis1_LimitLock = 0;
+    Axis2_LimitLock = 0;
+
+    // 明确不 tracking
+    trackingState = TrackingNone;
+    lastTrackingState = TrackingNone;
+    abortTrackingState = TrackingNone;
+
+    // 电机使能，但不发跟踪脉冲
+    enableStepperDrivers();
+
+    // 使用 tracking 微步/电流保持，不切 GOTO 模式
+    axis1DriverTrackingMode(false);
+    axis2DriverTrackingMode(false);
+
+    // 未真实回原点前，不启用坐标安全限制
+    safetyLimitsOn = false;
+
+  #endif
 #endif
 
   // 如果存在，则启动旋转器 (Rotator)
@@ -428,18 +462,20 @@ void loop() {
 }
 
 void loop2() {
+#if HOME_SENSE != OFF
   // =========================================================
-  // 监听回原点 (Homing) 状态
+  // 监听自动回原点 (Homing) 状态
   // =========================================================
   static bool wasHoming = false;
   if (isHoming()) {
       wasHoming = true; // 系统正在回原点
   } else if (wasHoming) {
-      // 如果之前在回原点，现在停了，说明回零结束，解锁系统
-      systemHasHomed = true; 
+      // 不在主循环里直接把 systemHasHomed 置 true。
+      // 真实自动回零成功只由 Home.ino 的 FH_DONE 阶段确认，避免回零失败也误解锁。
       wasHoming = false;
   }
   // =========================================================
+#endif
 
   // 导星 (GUIDING) -------------------------------------------------------------------------------------------
   ST4();
@@ -595,6 +631,15 @@ void loop2() {
         // =========================================================
         if (!isEscaping) {
             generalError = ERR_LIMIT_SENSE;
+
+#if HOME_SENSE != OFF
+            // 只有启用 HOME_SENSE 时，限位中断后才进入“必须重新真实回零”的增强保护。
+            // HOME_SENSE 关闭时，不引入回零锁，尽量保持 OnStep 4.24 原始控制路径。
+            systemHasHomed = false;
+            gotoRequiresHomeAfterAbort = true;
+            if (trackingState == TrackingMoveTo) gotoAbortedBySafety = true;
+#endif
+
             stopGuideAxis1(); 
             stopGuideAxis2();
             stopSlewingAndTracking(SS_LIMIT_HARD);
@@ -812,35 +857,56 @@ void loop2() {
 // SS_LIMIT_AXIS2_MIN 停止 GOTO + 螺旋搜寻 + 跟踪，并停止/阻止反向的赤纬/高度角导星
 // SS_LIMIT_AXIS2_MAX 停止 GOTO + 螺旋搜寻 + 跟踪，并停止/阻止正向的赤纬/高度角导星
 void stopSlewingAndTracking(StopSlewActions ss) {
+
   if (trackingState == TrackingMoveTo) {
+
+    // GOTO 过程中，所有非普通停止都视为安全中断。
+    // 这样 MoveTo 不会把当前位置伪装成正常目标完成。
+    if (ss != SS_ALL_FAST) {
+      gotoAbortedBySafety = true;
+      gotoRequiresHomeAfterAbort = true;
+    }
+
     if (!abortGoto) {
-      abortGoto=StartAbortGoto;
+      abortGoto = StartAbortGoto;
       VLF("MSG: Goto aborted");
     }
+
   } else {
+
     if (spiralGuide) stopGuideSpiral();
-    if (ss == SS_ALL_FAST || ss == SS_LIMIT_HARD) { stopGuideAxis1(); stopGuideAxis2();
+
+    if (ss == SS_ALL_FAST || ss == SS_LIMIT_HARD) {
+      stopGuideAxis1();
+      stopGuideAxis2();
     } else
     if (ss == SS_LIMIT_AXIS1_MIN) {
-      if (guideDirAxis1 == 'e' ) guideDirAxis1='b';
+      if (guideDirAxis1 == 'e') guideDirAxis1 = 'b';
     } else
     if (ss == SS_LIMIT_AXIS1_MAX) {
-      if (guideDirAxis1 == 'w' ) guideDirAxis1='b';
+      if (guideDirAxis1 == 'w') guideDirAxis1 = 'b';
     } else
     if (ss == SS_LIMIT_AXIS2_MIN) {
-      if (getInstrPierSide() == PierSideWest) { if (guideDirAxis2 == 'n' ) guideDirAxis2='b';
-      } else if (guideDirAxis2 == 's' ) guideDirAxis2='b';
+      if (getInstrPierSide() == PierSideWest) {
+        if (guideDirAxis2 == 'n') guideDirAxis2 = 'b';
+      } else {
+        if (guideDirAxis2 == 's') guideDirAxis2 = 'b';
+      }
     } else
     if (ss == SS_LIMIT_AXIS2_MAX) {
-      if (getInstrPierSide() == PierSideWest) { if (guideDirAxis2 == 's' ) guideDirAxis2='b';
-      } else if (guideDirAxis2 == 'n' ) guideDirAxis2='b';
+      if (getInstrPierSide() == PierSideWest) {
+        if (guideDirAxis2 == 's') guideDirAxis2 = 'b';
+      } else {
+        if (guideDirAxis2 == 'n') guideDirAxis2 = 'b';
+      }
     }
+
     if (trackingState != TrackingNone) {
       if (ss != SS_ALL_FAST) {
         if (generalError != ERR_DEC) {
           stopGuideAxis1();
           stopGuideAxis2();
-          trackingState=TrackingNone;
+          trackingState = TrackingNone;
           VLF("MSG: Limit exceeded guiding/tracking stopped");
         }
       }

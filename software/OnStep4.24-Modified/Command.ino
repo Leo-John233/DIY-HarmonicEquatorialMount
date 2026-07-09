@@ -1328,33 +1328,47 @@ void processCommands() {
 // :Me# :Mw#  Move Telescope East or West at current guide rate
       //            Returns: Nothing
       if ((command[1] == 'e' || command[1] == 'w') && parameter[0] == 0) {
-        
-        // --- 拦截条件：没回零，或者按了东且东面锁死，或者按了西且西面锁死 ---
-        if (!systemHasHomed || (command[1] == 'e' && Axis1_LimitLock == 1) || (command[1] == 'w' && Axis1_LimitLock == -1)) {
-            boolReply = false;       // 告诉底层：不用返回字符
-            commandError = CE_NONE;  // 核心修改：伪装成无错误，彻底阻止底层向蓝牙疯狂发日志
+
+        // 手动移动不受 HOME_SENSE / systemHasHomed 限制；
+        // 只有启用 LIMIT_SENSE 时，才拦截已经锁死的物理限位危险方向。
+        bool blockedByLimitAxis1 = false;
+#if LIMIT_SENSE != OFF
+        blockedByLimitAxis1 =
+          ((command[1] == 'e' && Axis1_LimitLock == 1) ||
+           (command[1] == 'w' && Axis1_LimitLock == -1));
+#endif
+
+        if (blockedByLimitAxis1) {
+          boolReply = false;
+          commandError = CE_NONE;  // 静默拒绝危险方向，避免客户端刷错误
         } else {
-            // 如果通过了安全检查，才允许执行电机转动
-            commandError=startGuideAxis1(command[1],currentGuideRate,GUIDE_TIME_LIMIT*1000,false);
-            boolReply=false;
+          commandError=startGuideAxis1(command[1],currentGuideRate,GUIDE_TIME_LIMIT*1000,false);
+          boolReply=false;
         }
-        
+
       } else
-      
+
       // :Mn# :Ms#  Move Telescope North or South at current guide rate
       //            Returns: Nothing
       if ((command[1] == 'n' || command[1] == 's') && parameter[0] == 0) {
-        
-        // --- 拦截条件：没回零，或者按了北且北面锁死，或者按了南且南面锁死 ---
-        if (!systemHasHomed || (command[1] == 'n' && Axis2_LimitLock == 1) || (command[1] == 's' && Axis2_LimitLock == -1)) {
-            boolReply = false;       // 告诉底层：不用返回字符
-            commandError = CE_NONE;  // 核心修改：伪装成无错误
+
+        // 手动移动不受 HOME_SENSE / systemHasHomed 限制；
+        // 只有启用 LIMIT_SENSE 时，才拦截已经锁死的物理限位危险方向。
+        bool blockedByLimitAxis2 = false;
+#if LIMIT_SENSE != OFF
+        blockedByLimitAxis2 =
+          ((command[1] == 'n' && Axis2_LimitLock == 1) ||
+           (command[1] == 's' && Axis2_LimitLock == -1));
+#endif
+
+        if (blockedByLimitAxis2) {
+          boolReply = false;
+          commandError = CE_NONE;
         } else {
-            // 如果通过了安全检查，才允许执行电机转动
-            commandError=startGuideAxis2(command[1],currentGuideRate,GUIDE_TIME_LIMIT*1000,false);
-            boolReply=false;
+          commandError=startGuideAxis2(command[1],currentGuideRate,GUIDE_TIME_LIMIT*1000,false);
+          boolReply=false;
         }
-        
+
       } else
 // :Mp#  Move Telescope for sPiral search at current guide rate
 //            Returns: Nothing
@@ -1395,23 +1409,24 @@ void processCommands() {
 //              8=already in motion
 //              9=unspecified error
 if (command[1] == 'S' && parameter[0] == 0)  {
-        
-        // --- 拦截 GOTO ---
-        if (!systemHasHomed) {
-            reply[0] = '3'; // 伪装成待机状态
+        // GOTO 回零锁只绑定 HOME_SENSE。HOME_SENSE 关闭时，走 OnStep 4.24 原始 GOTO 控制路径。
+        bool blockGotoUntilHome = false;
+#if HOME_SENSE != OFF
+        blockGotoUntilHome = (!systemHasHomed || gotoRequiresHomeAfterAbort);
+#endif
+
+        if (blockGotoUntilHome) {
+            reply[0] = '3';   // standby / not ready
             reply[1] = 0;
             boolReply = false;
             supress_frame = true;
-            commandError = CE_PARKED; 
-
-            // 【新增这一行】：既然拦截了 GOTO，就顺手把可能被 APP 提前唤醒的跟踪也强制关掉
-            trackingState = TrackingNone; 
-
+            commandError = CE_SLEW_ERR_IN_STANDBY;
         } else {
-            // 原本的正常 GOTO 逻辑放在 else 里面
-            newTargetRA=origTargetRA; newTargetDec=origTargetDec;
+            // 原本正常 GOTO 逻辑从这里开始
+            newTargetRA = origTargetRA;
+            newTargetDec = origTargetDec;
 #if TELESCOPE_COORDINATES == TOPOCENTRIC
-            topocentricToObservedPlace(&newTargetRA,&newTargetDec);
+            topocentricToObservedPlace(&newTargetRA, &newTargetDec);
 #endif
             CommandErrors e=goToEqu(newTargetRA,newTargetDec);
             if (e >= CE_GOTO_ERR_BELOW_HORIZON && e <= CE_GOTO_ERR_UNSPECIFIED) reply[0]=(char)(e-CE_GOTO_ERR_BELOW_HORIZON)+'1';
@@ -2088,16 +2103,16 @@ if (command[1] == 'S' && parameter[0] == 0)  {
 //                    1 on success
 
       if (command[0] == 'T' && parameter[0] == 0) {
-        // ==========================================================
-          // --- [核心修复] 开机未回零前，拦截开启跟踪，必须标准回复 '0' ---
-          if (!systemHasHomed) {
-              reply[0] = '0'; // 明确告诉 APP 被拒绝了，它就不会死等超时
-              reply[1] = 0; 
-              boolReply = false; 
-              supress_frame = true; 
-              commandError = CE_NONE; // 保持静默，不刷日志，不堵塞蓝牙
-              return; 
-          }
+#if HOME_SENSE != OFF
+        // Tracking 回零锁只绑定 HOME_SENSE。HOME_SENSE 关闭时，走 OnStep 4.24 原始 Tracking 控制路径。
+        if (!systemHasHomed || gotoRequiresHomeAfterAbort) {
+          reply[0] = 0;
+          boolReply = false;
+          supress_frame = true;
+          commandError = CE_SLEW_ERR_IN_STANDBY;
+          return;
+        }
+#endif
           // ==========================================================
 #if MOUNT_TYPE != ALTAZM
         static bool dualAxis=false;

@@ -77,6 +77,13 @@
                                           //   Signal state reverses when travel moves ccw past the home position.
                                           //   当转动越过原点逆时针方向时，信号状态会反转       
 
+// 偏置零位配置(由于传感器感应区域宽度或传感器安装位置不在原点，可能需要设置偏置角度)                            
+#define HOME_OFFSET_AXIS1             0   //  n.n (度), 赤经/方位轴的偏置角度（支持正负号改变方向，0为不偏置）
+#define HOME_OFFSET_AXIS2             0   //  n.n (度), 赤纬/俯仰轴的偏置角度（支持正负号改变方向，0为不偏置）
+#define HOME_OFFSET_RATE              7   //  7, n. 偏置阶段使用的速度档位                            
+                                          //  可选值通常为 1..9 档。
+                                          //  提示：7 = 48x 恒星速（推荐，精找速度），8 = 半最大速，9 = 全速（Goto速度）
+
 #define LIMIT_SENSE             ON_PULLUP //    OFF, ON*, ON_PULLUP、ON_PULLUND limit sense switch close to Gnd stops gotos and/or tracking.         Option
                                           //    OFF, ON* 限位开关。闭合接地时停止GOTO或跟踪
 #define LIMIT_SENSE_STATE             LOW //    LOW, For NO (normally open) switches, HIGH for NC (normally closed.)          Adjust
@@ -161,6 +168,9 @@
 #define STEP_WAVE_FORM             SQUARE // SQUARE, PULSE Step signal wave form faster rates. SQUARE best signal integrity.  Adjust
                                           // SQUARE, PULSE 高速时的脉冲波形。SQUARE (方波) 信号最稳
 
+// 开机电机保持
+#define MOTOR_HOLD_ON_BOOT            OFF //    OFF, ON 只使能驱动器，不启动 tracking，不建立 home 坐标
+
 // 步进驱动器型号说明 (也可以看 ~/OnStep/src/sd_drivers/Models.h 获取更多型号): 
 // A4988, DRV8825, LV8729, S109, SSS TMC2209*, TMC2130* **, 和 TMC5160* ***
 // * = 加上 _QUIET 后缀 (例如 "TMC2130_QUIET") 表示开启 stealthChop 静音跟踪模式
@@ -183,9 +193,9 @@
 #define AXIS1_DRIVER_REVERSE           ON //    OFF, ON 反转运动方向。或者你也可以把电机线反着接.                   <-Often
 #define AXIS1_DRIVER_STATUS           OFF //    OFF, TMC_SPI, HIGH, LOW.  轮询驱动器状态/故障.                     Option
 
-#define AXIS1_LIMIT_MIN              -92 //  -180, n. n= -90..-270 (度). 赤道仪模式下的最小“时角”.                             Adjust
+#define AXIS1_LIMIT_MIN              -110 //  -180, n. n= -90..-270 (度). 赤道仪模式下的最小“时角”.                             Adjust
                                           //        n. n=-180..-360 (度). 经纬仪模式下的最小方位角.
-#define AXIS1_LIMIT_MAX               92 //   180, n. n=  90.. 270 (度). 赤道仪模式下的最大“时角”.                             Adjust
+#define AXIS1_LIMIT_MAX               110 //   180, n. n=  90.. 270 (度). 赤道仪模式下的最大“时角”.                             Adjust
                                           //        n. n= 180.. 360 (度). 经纬仪模式下的最大方位角.
 
 // 轴 2：赤纬 / 俯仰(AXIS2 DEC/AL)T

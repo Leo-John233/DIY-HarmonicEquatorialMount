@@ -76,6 +76,12 @@
                                           //   HIGH, 从上面看，当轴位于原点顺时针方向时的电平状态。用LOW反转
                                           //   Signal state reverses when travel moves ccw past the home position.
                                           //   当转动越过原点逆时针方向时，信号状态会反转       
+// 偏置零位配置                            
+#define HOME_OFFSET_AXIS1          -1.5   //  n.n (度), 赤经/方位轴的偏置角度（支持正负号改变方向，0为不偏置）
+#define HOME_OFFSET_AXIS2             1   //  n.n (度), 赤纬/俯仰轴的偏置角度（支持正负号改变方向，0为不偏置）
+#define HOME_OFFSET_RATE              8   //  7, n. 偏置阶段使用的速度档位                             <- 新增
+                                          //  可选值通常为 1..9 档。
+                                          //  提示：7 = 48x 恒星速（推荐，精找速度），8 = 半最大速，9 = 全速（Goto速度）
 
 #define LIMIT_SENSE             ON_PULLUP //    OFF, ON*, ON_PULLUP、ON_PULLUND limit sense switch close to Gnd stops gotos and/or tracking.         Option
                                           //    OFF, ON* 限位开关。闭合接地时停止GOTO或跟踪
@@ -117,8 +123,8 @@
 #define GUIDE_DISABLE_BACKLASH        OFF //    OFF, Disable backlash takeup during guiding at <= 1X                          Option
                                           //    OFF, 在 <= 1X 导星修正时不进行反向间隙补偿（防止振荡）
 // 跟踪行为(TRACKING BEHAVIOUR) ---------------------------------------- see https://onstep.groups.io/g/main/wiki/Configuration-Mount#TRACKING
-#define TRACK_AUTOSTART                ON //    OFF, ON Start with tracking enabled.                                          Option
-                                          //    OFF, ON 上电后自动开始跟踪(修改为开机电机使能)
+#define TRACK_AUTOSTART               OFF //    OFF, ON Start with tracking enabled.                                          Option
+                                          //    OFF, ON 上电后自动开始跟踪
 #define TRACK_REFRACTION_RATE_DEFAULT OFF //    OFF, ON Start w/atmospheric refract. compensation (RA axis/Eq mounts only.)   Option
                                           //    OFF, ON 启动时开启大气折射率补偿 (仅限RA轴/赤道仪模式)
 #define TRACK_BACKLASH_RATE            25 //     25, n. Where n=2..50 (x sidereal rate) during backlash takeup.               Option
@@ -160,6 +166,8 @@
 // 运动控制(MOTION CONTROL) ---------------------------------------------- see https://onstep.groups.io/g/main/wiki/Configuration-Mount#MOTION
 #define STEP_WAVE_FORM             SQUARE // SQUARE, PULSE Step signal wave form faster rates. SQUARE best signal integrity.  Adjust
                                           // SQUARE, PULSE 高速时的脉冲波形。SQUARE (方波) 信号最稳
+// 开机电机保持
+#define MOTOR_HOLD_ON_BOOT             ON // 只使能驱动器，不启动 tracking，不建立 home 坐标
 
 // 步进驱动器型号说明 (也可以看 ~/OnStep/src/sd_drivers/Models.h 获取更多型号): 
 // A4988, DRV8825, LV8729, S109, SSS TMC2209*, TMC2130* **, 和 TMC5160* ***
@@ -174,18 +182,18 @@
 #define AXIS1_STEPS_PER_WORMROT     51200 //      12800, n. 蜗杆旋转一圈的步数 (仅用于 PEC 赤道仪模式)             <-Req'd
                                           //         n = (AXIS1_STEPS_PER_DEGREE * 360) / 最后一级减速比
 
-#define AXIS1_DRIVER_MODEL        TMC5160 //    OFF, (见上文). 驱动器型号.                                        <-Often
+#define AXIS1_DRIVER_MODEL  TMC5160_QUIET //    OFF, (见上文). 驱动器型号.                                        <-Often
 #define AXIS1_DRIVER_MICROSTEPS       64  //    OFF, n. 跟踪时的细分模式.                                         <-Often
 #define AXIS1_DRIVER_MICROSTEPS_GOTO  32  //    OFF, n. GOTO (高速转向) 时的细分模式 (通常降低细分防丢步)            Option
 #define AXIS1_DRIVER_IHOLD            OFF //    OFF, n, (mA.) 静止时的电流。OFF 代表使用 IRUN 的一半                Option
-#define AXIS1_DRIVER_IRUN             OFF //    OFF, n, (mA.) 跟踪时的电流。根据电机/驱动调整                       Option
-#define AXIS1_DRIVER_IGOTO            OFF //    OFF, n, (mA.) GOTO时的电流。OFF 代表和 IRUN 一样.                  Option
+#define AXIS1_DRIVER_IRUN            1400 //    OFF, n, (mA.) 跟踪时的电流。根据电机/驱动调整                       Option
+#define AXIS1_DRIVER_IGOTO           1500 //    OFF, n, (mA.) GOTO时的电流。OFF 代表和 IRUN 一样.                  Option
 #define AXIS1_DRIVER_REVERSE          OFF //    OFF, ON 反转运动方向。或者你也可以把电机线反着接.                   <-Often
 #define AXIS1_DRIVER_STATUS       TMC_SPI //    OFF, TMC_SPI, HIGH, LOW.  轮询驱动器状态/故障.                     Option
 
-#define AXIS1_LIMIT_MIN              -92 //  -180, n. n= -90..-270 (度). 赤道仪模式下的最小“时角”.                             Adjust
+#define AXIS1_LIMIT_MIN              -110 //  -180, n. n= -90..-270 (度). 赤道仪模式下的最小“时角”.                             Adjust
                                           //        n. n=-180..-360 (度). 经纬仪模式下的最小方位角.
-#define AXIS1_LIMIT_MAX               92 //   180, n. n=  90.. 270 (度). 赤道仪模式下的最大“时角”.                             Adjust
+#define AXIS1_LIMIT_MAX               110 //   180, n. n=  90.. 270 (度). 赤道仪模式下的最大“时角”.                             Adjust
                                           //        n. n= 180.. 360 (度). 经纬仪模式下的最大方位角.
 
 // 轴 2：赤纬 / 俯仰(AXIS2 DEC/AL)T
@@ -193,12 +201,12 @@
 #define AXIS2_STEPS_PER_DEGREE  14222.222 //  同上，每度步数                                                       <-Req'd
                                           //         n = (stepper_steps * micro_steps * overall_gear_reduction)/360.0
 
-#define AXIS2_DRIVER_MODEL        TMC5160 //    OFF, 同上.                                                        <-Often
+#define AXIS2_DRIVER_MODEL  TMC5160_QUIET //    OFF, 同上.                                                        <-Often
 #define AXIS2_DRIVER_MICROSTEPS       64  //    OFF, 跟踪细分.                                                    <-Often
 #define AXIS2_DRIVER_MICROSTEPS_GOTO  32  //    OFF, GOTO细分.                                                    Option
 #define AXIS2_DRIVER_IHOLD            OFF //    OFF, 静止电流.                                                     Option
-#define AXIS2_DRIVER_IRUN             OFF //    OFF, 跟踪电流.                                                     Option
-#define AXIS2_DRIVER_IGOTO            OFF //    OFF, GOTO电流.                                                     Option
+#define AXIS2_DRIVER_IRUN            1200 //    OFF, 跟踪电流.                                                     Option
+#define AXIS2_DRIVER_IGOTO           1300 //    OFF, GOTO电流.                                                     Option
 #define AXIS2_DRIVER_POWER_DOWN       OFF //    OFF, ON 停止移动10秒后，或最后一次<=1x导星10分钟后，自动断电.          Option
 #define AXIS2_DRIVER_REVERSE           ON //    OFF, ON 反转方向.                                                  <-Often
 #define AXIS2_DRIVER_STATUS       TMC_SPI //    OFF, TMC_SPI, HIGH, or LOW, 状态检测.                               Option

@@ -377,6 +377,16 @@ CommandErrors goTo(double thisTargetAxis1, double thisTargetAxis2, double altTar
   #endif
 #endif
   lastTrackingState=trackingState;
+  // 开机电机保持时 trackingState 是 TrackingNone。
+  // 但只要已经真实回原点，并且没有安全中断锁，合法 GOTO 完成后应该进入恒星跟踪。
+  // 这样 NINA Center 后续 Sync 不会因为 TrackingNone 失败。
+  if (lastTrackingState == TrackingNone &&
+    systemHasHomed &&
+    !gotoRequiresHomeAfterAbort &&
+    parkStatus != Parking &&
+    !isHoming()) {
+  lastTrackingState = TrackingSidereal;
+  }
 
   cli();
   trackingState=TrackingMoveTo;

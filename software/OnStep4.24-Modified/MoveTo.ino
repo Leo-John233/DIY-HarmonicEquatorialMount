@@ -273,18 +273,57 @@ void moveTo() {
           homeMount=false;
           if (AXIS2_TANGENT_ARM == OFF) atHome=true;
 
+#if HOME_SENSE != OFF
+          // HOME_SENSE 启用时，homeMount 完成代表重新建立可信 Home 基准。
+          systemHasHomed = true;
+          gotoAbortedBySafety = false;
+          gotoRequiresHomeAfterAbort = false;
+#endif
+#if LIMIT_SENSE != OFF
+          // LIMIT_SENSE 启用时，Home 完成后清除限位方向锁。
+          Axis1_LimitLock = 0;
+          Axis2_LimitLock = 0;
+#endif
+
           VLF("MSG: Homing done");
         } else {
-          // restore trackingState
-          trackingState=lastTrackingState; lastTrackingState=TrackingNone;
-          SiderealClockSetInterval(siderealInterval);
-          setDeltaTrackingRate();
-          VLF("MSG: Goto done");
-          
-          // allow 5 seconds for synchronization of coordinates after goto ends
-          if (trackingState == TrackingSidereal) {
-            trackingSyncSeconds=5;
-            VLF("MSG: Tracking sync started");
+
+#if HOME_SENSE != OFF
+          // 安全中断：只在 HOME_SENSE 回零锁启用时，阻止伪装成 GOTO done。
+          if (gotoAbortedBySafety) {
+
+            trackingState = TrackingNone;
+            lastTrackingState = TrackingNone;
+
+            SiderealClockSetInterval(siderealInterval);
+            setDeltaTrackingRate();
+
+            if (generalError == ERR_NONE) generalError = ERR_LIMIT_SENSE;
+
+            gotoAbortedBySafety = false;
+            gotoRequiresHomeAfterAbort = true;
+            systemHasHomed = false;
+
+            VLF("MSG: Goto failed by safety abort; home required");
+
+          } else
+#endif
+          {
+
+            // 正常 GOTO 完成
+            trackingState = lastTrackingState;
+            lastTrackingState = TrackingNone;
+
+            SiderealClockSetInterval(siderealInterval);
+            setDeltaTrackingRate();
+
+            VLF("MSG: Goto done");
+
+            // allow 5 seconds for synchronization of coordinates after goto ends
+            if (trackingState == TrackingSidereal) {
+              trackingSyncSeconds = 5;
+              VLF("MSG: Tracking sync started");
+            }
           }
         }
       }
