@@ -32,11 +32,11 @@
 👉 **[奇文共赏：点击此处阅读“白嫖式创业奇才”的逆天聊天实录](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/Chat%20history/readme.md)**
 
 ---
-# DIY谐波赤道仪（已完成实拍与导星测试）
+## DIY谐波赤道仪（已完成实拍与导星测试）
 
 由于我厌倦了 EQ3D 赤道仪的沉重，我计划用更轻便的谐波赤道仪来替换它。然而市面上的谐波赤道仪价格较高，尤其是与 DIY 可实现的规格相比，因此这个项目就此诞生。该谐波赤道仪旨在不牺牲性能的前提下，兼顾高精度、便携性和经济性
 
-# 项目描述
+## 项目描述
 
 自制谐波赤道仪的核心部件为 Leaderdrive 拆机二手工业谐波减速器，也适用于同规格的 25-100 谐波减速器
 ![image.png](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/3D-Views/1.png)
@@ -59,11 +59,11 @@
 该项目已完成通电、基础 GoTo、闭环导星和约 13 kg 实际成像负载下的实拍验证。稳定导星时段的 PHD2 总 RMS 通常约为 0.4″ 至 0.6″，不同装配、负载和环境下的结果可能有所差异
 
 
-# 🌌实拍与导星测试
+## 实拍与导星测试
 
 本次拍摄目标为 **Herschel 36**
 
-![Herschel 36](pictures/Test-Results/Herschel-36.jpg)
+![Herschel 36](https://github.com/Leo-John233/DIY-HarmonicEquatorialMount/blob/main/pictures/Test/Herschel-36.jpg)
 
 | **实拍项目** | **配置** |
 | :----- | :----- |
@@ -87,7 +87,7 @@
 - [ ] 关闭导星修正和 Dither 后的长时间本征周期误差测试
 - [ ] 不同焦距、曝光时间和环境条件下的长期实拍验证
 
-## 📈 PHD2 导星测试
+## PHD2 导星测试
 
 ### 测试配置
 
@@ -117,21 +117,20 @@
 
 - **稳定阶段两轴误差较为均衡**：RA RMS 为 0.43″，Dec RMS 为 0.50″，两轴差值较小，未表现出明显的单轴持续振荡。总 RMS 为 0.66″，按 2.99″/px 的导星图像比例换算约为 0.22 px，其中 RA 约为 0.14 px，Dec 约为 0.17 px
 - **完整记录的 RMS 主要由 Dec 瞬态波动拉高**：完整记录中的 RA RMS 为 0.45″，与稳定片段接近，说明 RA 长时间表现基本保持一致。Dec RMS 上升至 0.82″，表明完整记录中的 Dither、Settling、微风或少量异常峰值主要影响了 Dec 统计结果，不代表稳定跟踪阶段持续存在 0.82″ 的 Dec 误差
-- **约 13 kg 实际负载下仍能维持稳定闭环导星**：在铁皮桶全改小黑、Nikon D7000、MPCC 和导星系统组成的约 13 kg 成像负载下，稳定阶段未观察到明显发散或持续性机械振荡，说明当前结构刚性、传动控制和导星响应能够满足实际成像需求
+- **约 13 kg 实际负载下维持稳定导星**：在铁皮桶全改小黑、Nikon D7000、MPCC 和导星系统组成的约 13 kg 成像负载下，稳定阶段未观察到明显发散或持续性机械振荡，说明当前结构刚性、传动控制和导星响应能够满足实际成像需求
 - **0.2 s 导星曝光体现了较快的修正响应**：较短曝光有助于快速修正误差，但也更容易受到视宁度和瞬时扰动影响。因此，0.4″ 至 0.6″ 应视为本次设备、参数和环境组合下的实测表现，不应直接作为所有场景下的固定性能指标
-- **频域结果不能直接作为本征周期误差**：频域分析中选中的低频分量周期约为 2206.6 s，显示振幅约为 0.1″。由于数据来自闭环导星记录，并包含低频漂移、Dither 和 Settling，该结果只能用于观察频率成分，不能直接认定为谐波减速器的本征周期误差
-- **总体结论**：现有数据能够证明该原型机在约 13 kg 实际成像负载和微风环境下具备稳定的亚角秒级闭环导星能力，并已完成 Herschel 36 实拍验证。但当前结果不能代替多夜重复测试、不同载重对比和长时间无导星周期误差测试
+- **频域结果不能直接作为本征周期误差**：频域分析中选中的低频分量周期约为 2206.6 s，显示振幅约为 0.1″。由于数据来自导星记录，并包含低频漂移、Dither 和 Settling，该结果只能用于观察频率成分，不能直接认定为谐波减速器的本征周期误差
 
 <details>
 <summary>展开查看 PHD2 测试截图与频域分析</summary>
 
-![PHD2 stable guiding](pictures/Test-Results/PHD2-Guiding-0.66arcsec.png)
+![PHD2 stable guiding](https://github.com/Leo-John233/DIY-HarmonicEquatorialMount/blob/main/pictures/Test/2026-07-03%20002555.png)
 
-![PHD2 complete log](pictures/Test-Results/PHD2-Log-52m45s.png)
+![PHD2 complete log](https://github.com/Leo-John233/DIY-HarmonicEquatorialMount/blob/main/pictures/Test/2026-07-03%20133401.png)
 
-![PHD2 drift-corrected analysis](pictures/Test-Results/PHD2-Drift-Corrected.png)
+![PHD2 drift-corrected analysis](https://github.com/Leo-John233/DIY-HarmonicEquatorialMount/blob/main/pictures/Test/2026-07-03%20153632.png)
 
-![PHD2 frequency analysis](pictures/Test-Results/PHD2-Frequency-Analysis.png)
+![PHD2 frequency analysis](https://github.com/Leo-John233/DIY-HarmonicEquatorialMount/blob/main/pictures/Test/2026-07-03%20153353.png)
 
 移除 RA 导星修正后的曲线仍包含低频漂移、Dither 和 Settling 的影响，不能直接将整段曲线的峰峰值视为谐波减速器的本征周期误差
 
@@ -139,7 +138,7 @@
 
 </details>
 
-# ✨主要特点
+## ✨主要特点
 | **特征** | **描述** |
 | :----- | :----- |
 | 安装类型 | GEM德式赤道仪 |
@@ -165,7 +164,7 @@
 
 ---
 
-## 🔌 电子部分概览
+## 🔌电子部分概览
 
 控制系统完全采用定制设计，并围绕紧凑结构构建，它包括：
 
@@ -191,7 +190,7 @@
 
 所有电路板原理图及 PCB Layout（严格把控了安全间距、过孔尺寸和大电流线宽）均使用开源工具设计，您可以在 [JLC PCB](https://member.jlc.com/?spm=PCB.Homepage) 订购 PCB或对其进行重新组合以满足您的需求
 
-## 💻 固件配置与刷写
+## 💻固件配置与刷写
 
 谐波赤道仪的主控搭载了 **ESP32-WROOM-32E (16MB)**，这款大容量核心不仅能轻松运行复杂的 [OnStep / OnStepX](https://onstep.groups.io/g/main/wiki) 固件，还为内置星表、高精度对位模型 (Pointing Model) 以及功能丰富的 Smart Web UI 留出了充足的存储空间
 
@@ -199,7 +198,7 @@
 
 ---
 
-## 🛠️ 机械部分组装指南
+## 🛠️机械部分组装指南
 
 请参阅 [Assembly.md](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/hardware/Assembly.md)
 

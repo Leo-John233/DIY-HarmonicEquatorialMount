@@ -42,7 +42,7 @@ The project has completed power-on, basic GoTo, closed-loop guiding, and field i
 
 The imaging target was **Herschel 36**
 
-![Herschel 36](pictures/Test-Results/Herschel-36.jpg)
+![Herschel 36](https://github.com/Leo-John233/DIY-HarmonicEquatorialMount/blob/main/pictures/Test/Herschel-36.jpg)
 
 | **Imaging Item** | **Configuration** |
 | :----- | :----- |
@@ -99,18 +99,17 @@ During normal use, the total RMS during stable guiding was typically around 0.4�
 - **Stable closed-loop guiding was maintained under an actual payload of approximately 13 kg**: With the fully modified Xiaohei Newtonian, Nikon D7000, MPCC, and guide system installed, the stable interval showed no obvious divergence or sustained mechanical oscillation. This indicates that the present structural rigidity, transmission control, and guiding response are sufficient for practical imaging with this tested setup
 - **The 0.2 s guide exposure demonstrates fast correction response**: A short exposure can respond quickly to tracking deviations, but it is also more sensitive to seeing and brief disturbances. The observed 0.4″ to 0.6″ range should therefore be treated as a measured result for this specific equipment, parameter set, and environment rather than a fixed value for every operating condition
 - **The frequency-domain result is not a direct measurement of intrinsic periodic error**: The selected low-frequency component had a period of approximately 2206.6 s and a displayed amplitude of approximately 0.1″. Because the data came from a closed-loop guiding log containing low-frequency drift, dither, and settling, the result can only be used to inspect frequency components and cannot be identified directly as the intrinsic periodic error of the harmonic reducer
-- **Overall conclusion**: The current data demonstrate stable sub-arcsecond closed-loop guiding under an actual imaging payload of approximately 13 kg in a light breeze, together with a successful Herschel 36 imaging test. They do not replace multi-night repeat testing, payload comparisons, or a long unguided periodic-error measurement
 
 <details>
 <summary>View the PHD2 screenshots and frequency-domain analysis</summary>
 
-![PHD2 stable guiding](pictures/Test-Results/PHD2-Guiding-0.66arcsec.png)
+![PHD2 stable guiding](https://github.com/Leo-John233/DIY-HarmonicEquatorialMount/blob/main/pictures/Test/2026-07-03%20002555.png)
 
-![PHD2 complete log](pictures/Test-Results/PHD2-Log-52m45s.png)
+![PHD2 complete log](https://github.com/Leo-John233/DIY-HarmonicEquatorialMount/blob/main/pictures/Test/2026-07-03%20133401.png)
 
-![PHD2 drift-corrected analysis](pictures/Test-Results/PHD2-Drift-Corrected.png)
+![PHD2 drift-corrected analysis](https://github.com/Leo-John233/DIY-HarmonicEquatorialMount/blob/main/pictures/Test/2026-07-03%20153632.png)
 
-![PHD2 frequency analysis](pictures/Test-Results/PHD2-Frequency-Analysis.png)
+![PHD2 frequency analysis](https://github.com/Leo-John233/DIY-HarmonicEquatorialMount/blob/main/pictures/Test/2026-07-03%20153353.png)
 
 The curve with RA guide corrections removed still contains low-frequency drift, dither, and settling effects. Its full peak-to-peak range must not be treated as the intrinsic periodic error of the harmonic reducer
 
