@@ -42,6 +42,8 @@ The project has completed power-on, basic GoTo, guiding, and real-world imaging 
 | Estimated Weight | 9.5 kg (including dovetail saddle and latitude base) |
 | Measured Guiding Performance | PHD2 total RMS typically around 0.4″ to 0.6″ during stable guiding |
 
+---
+
 ## Project Description
 
 The core components of this DIY harmonic equatorial mount are used industrial Leaderdrive harmonic reducers. The design is also compatible with equivalent 25-100 harmonic reducers.
@@ -129,6 +131,8 @@ The curve with RA guide corrections removed still contains low-frequency drift, 
 In the frequency analysis, the selected low-frequency component has a period of approximately 2206.6 s and a displayed amplitude of approximately 0.1″. This result is useful only for inspecting frequency components and does not replace a long unguided periodic-error test with guide corrections and dithering disabled
 
 </details>
+
+---
 
 ## 🔗 Bill of Materials (BOM)
 
