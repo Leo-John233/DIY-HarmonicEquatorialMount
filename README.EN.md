@@ -174,6 +174,53 @@ The control system features a completely custom design, built around a compact a
 
 All circuit schematics and PCB layouts—which feature strictly controlled safety clearances, via dimensions, and high-current trace widths—were designed using open-source tools. You can order the PCBs directly from [JLC PCB](https://member.jlc.com/?spm=PCB.Homepage) or modify the designs to suit your specific requirements.
 
+### PCB Manufacturing and Assembly
+
+![PCB front](https://github.com/Leo-John233/DIY-HarmonicEquatorialMount/blob/main/pictures/pcb/PCB-1.jpg)
+
+![PCB reverse-side driver installation](https://github.com/Leo-John233/DIY-HarmonicEquatorialMount/blob/main/pictures/pcb/PCB-2.jpg)
+
+![PCB reverse-side TMC2209 installation](https://github.com/Leo-John233/DIY-HarmonicEquatorialMount/blob/main/pictures/pcb/PCB-3.jpg)
+
+The following sequence is recommended for PCB manufacturing and assembly:
+
+1. **Submit the PCB files**
+   * Upload the Gerber archive for the corresponding board revision directly to the PCB manufacturer
+   * Before ordering, verify the board outline, mounting holes, slots, and connector openings, and make sure the manufacturing platform has not automatically scaled or modified the design
+   * If the board thickness, copper weight, surface finish, or component footprints are changed, recheck enclosure clearance, connector height, and high-current trace capacity
+
+2. **Verify components and orientation**
+   * Before soldering, check every component against the schematic, BOM, PCB silkscreen, and footprint orientation
+   * Pay particular attention to diodes, LEDs, electrolytic capacitors, voltage regulators, the ESP32, the ESP-07S, and other polarized or orientation-sensitive components
+   * Install the CR1220 battery according to the PCB marking. In the photographed assembly, the positive side faces outward
+   * Keep metal plates, shielding, and enclosure walls away from the ESP32 antenna area to avoid degrading wireless performance
+
+3. **Recommended soldering order**
+   * Begin with low-profile SMD components such as resistors, capacitors, diodes, and small ICs
+   * Continue with the power circuitry, pin headers, driver sockets, buttons, and LED connectors
+   * Install the XH2.54 connectors, USB connector, network connector, DC jack, XT60 connector, and other tall components last
+   * Install the TMC drivers, ESP modules, and coin-cell battery only after completing short-circuit checks and basic power-rail testing
+
+4. **Driver installation**
+   * The driver modules are installed on the reverse side of the PCB. Before insertion, verify the PCB silkscreen against the driver's `GND`, `VM`, `EN`, `STEP`, and `DIR` pins
+   * TMC2209 and TMC5160 modules from different manufacturers may use different pin arrangements, pad layouts, or thermal structures. Do not determine orientation from appearance alone
+   * For TMC5160 SPI mode, close the corresponding SPI jumpers and select `TMC5160_SPI` in the firmware
+   * For TMC2209 or other STEP/DIR drivers, open the SPI jumpers and configure the microstepping and driver current to match the installed hardware
+   * Reversed installation or hot-plugging can immediately damage the driver and the controller board
+
+5. **First power-up**
+   * Before applying power, use a multimeter to check for an obvious short circuit between the main power input and ground
+   * A current-limited bench power supply is recommended for the first test, beginning with a low current limit
+   * During the first power-up, leave the motors, sensors, and driver modules disconnected. Confirm that the power section does not overheat and verify the main voltage rails
+   * After confirming controller operation, USB communication, and wireless connectivity, install the drivers one at a time and then connect the RA and Dec motors
+   * Perform the first motor test at low current and low speed. Verify direction, home-sensor behavior, and limit logic before increasing the operating parameters
+
+6. **Interface connections**
+   * Connect `LIMIT-RA`, `LIMIT-DEC`, `HOME-RA`, and `HOME-DEC` to the corresponding axis limit and home sensors
+   * Confirm the pin order in the schematic before connecting the `RA-XH2.54`, `DEC-XH2.54`, and `BRAKE` interfaces
+   * Observe LED polarity when connecting the status, link, and power indicators
+   * Do not use multiple main power inputs simultaneously unless their electrical relationship and intended use have been confirmed from the schematic
+
 ## 💻Firmware Configuration and Flashing
 
 The main controller for the harmonic equatorial mount features an **ESP32-WROOM-32UE (16MB)** module. This high-capacity core not only effortlessly runs the complex [OnStep / OnStepX](https://onstep.groups.io/g/main/wiki) firmware but also provides ample storage space for built-in star catalogs, high-precision pointing models, and a feature-rich Smart Web UI.

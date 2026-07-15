@@ -195,6 +195,55 @@
 
 所有电路板原理图及 PCB Layout（严格把控了安全间距、过孔尺寸和大电流线宽）均使用开源工具设计，您可以在 [JLC PCB](https://member.jlc.com/?spm=PCB.Homepage) 订购 PCB或对其进行重新组合以满足您的需求
 
+### PCB 制作与装配说明
+
+![PCB front](https://github.com/Leo-John233/DIY-HarmonicEquatorialMount/blob/main/pictures/pcb/PCB-1.jpg)
+
+![PCB reverse-side TMC5160 installation](https://github.com/Leo-John233/DIY-HarmonicEquatorialMount/blob/main/pictures/pcb/PCB-2.jpg)
+
+![PCB reverse-side TMC2209 installation](https://github.com/Leo-John233/DIY-HarmonicEquatorialMount/blob/main/pictures/pcb/PCB-3.jpg)
+
+PCB 制作和装配建议按以下顺序进行：
+
+1. **提交 PCB 文件**
+   * 将仓库中对应版本的 Gerber 压缩包直接上传至 PCB 厂商
+   * 下单前检查板框尺寸、安装孔、槽位和连接器开口，避免生产平台自动缩放或修改外形
+   * 如果自行修改板厚、铜厚、表面处理或元件封装，需要重新确认外壳间隙、连接器高度和大电流走线能力
+
+2. **核对元件和方向**
+   * 焊接前根据原理图、BOM、PCB 丝印和封装方向逐项核对元件
+   * 重点检查二极管、LED、电解电容、稳压芯片、ESP32、ESP-07S 和其他有方向要求的器件
+   * CR1220 电池按 PCB 丝印方向安装，照片所示安装方式为正极朝外
+   * ESP32 天线区域附近不要布置金属挡板、屏蔽片或紧贴外壳，以免影响无线连接
+
+3. **建议焊接顺序**
+   * 先焊接电阻、电容、二极管和小型 IC 等低矮贴片器件
+   * 再焊接电源模块、排针、驱动器插座、按键和 LED 接口
+   * 最后安装 XH2.54 插座、USB、网络接口、DC 插座、XT60 和其他较高连接器
+   * TMC 驱动器、ESP 模块和纽扣电池应在完成短路检查和基础供电测试后再安装
+
+4. **驱动器安装**
+   * 驱动器安装在 PCB 背面，插入前必须核对 PCB 丝印与驱动器上的 `GND`、`VM`、`EN`、`STEP` 和 `DIR` 引脚
+   * 不同厂商的 TMC2209 或 TMC5160 模块可能存在引脚、焊盘或散热结构差异，不能只根据模块外观判断方向
+   * 使用 TMC5160 SPI 模式时闭合对应 SPI 跳线，并在固件中选择 `TMC5160_SPI`
+   * 使用 TMC2209 或其他 STEP/DIR 驱动器时断开 SPI 跳线，并按照实际硬件设置填写细分参数和驱动电流
+   * 驱动器插反或带电插拔可能立即损坏驱动器和主控板
+
+5. **首次通电检查**
+   * 通电前使用万用表检查主电源正负极之间是否存在明显短路
+   * 首次测试建议使用带限流功能的实验电源，并从较低限流值开始
+   * 首次通电时不要连接电机、传感器和驱动器，先确认电源部分没有异常发热，并检查主要电压轨是否正常
+   * 确认主控、USB 通信和无线连接正常后，再逐个安装驱动器并连接 RA、Dec 电机
+   * 初次电机测试应使用较低电流和较低速度，确认转向、原点和限位逻辑正确后再提高参数
+
+6. **接口连接**
+   * `LIMIT-RA`、`LIMIT-DEC`、`HOME-RA` 和 `HOME-DEC` 分别连接对应轴的限位和原点传感器
+   * `RA-XH2.54`、`DEC-XH2.54` 和 `BRAKE` 接口应根据原理图确认引脚顺序后连接
+   * 状态灯、连接灯和电源灯接口需要注意 LED 极性
+   * 不建议同时连接多个主电源入口，除非已根据原理图确认其连接关系和使用方式
+
+> 💡**警告：任何焊接、驱动器插拔、跳线调整、传感器接线或电机接线操作都必须在主电源和 USB 供电完全断开后进行，首次上电前应再次检查电源极性、焊锡短路、驱动器方向和连接器引脚顺序**
+
 ## 💻固件配置与刷写
 
 谐波赤道仪的主控搭载了 **ESP32-WROOM-32E (16MB)**，这款大容量核心不仅能轻松运行复杂的 [OnStep / OnStepX](https://onstep.groups.io/g/main/wiki) 固件，还为内置星表、高精度对位模型 (Pointing Model) 以及功能丰富的 Smart Web UI 留出了充足的存储空间
