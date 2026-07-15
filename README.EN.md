@@ -11,7 +11,7 @@ This project employs a combination of open-source licenses, with separate licens
 *   **Hardware** (e.g., PCB designs, schematics, mechanical 3D models): Licensed under the [CERN Open Hardware Licence Version 2 - Strongly Reciprocal (CERN-OHL-S v2)](LICENSE-CERN). For detailed information, please refer to the `LICENSE-CERN` file.
 
 ---
-# DIY Harmonic Equatorial Mount (Field Imaging and Guiding Verified)
+## DIY Harmonic Equatorial Mount (Field Imaging and Guiding Verified)
 
 Having grown weary of the weight of my EQ3D equatorial mount, I planned to replace it with a lighter and more portable harmonic mount. Commercial harmonic mounts are expensive, especially when compared with the specifications achievable through a DIY build. This project was therefore created to combine precision, portability, and cost-effectiveness without compromising performance.
 
@@ -28,7 +28,7 @@ The key advantages of this DIY harmonic equatorial mount include:
 - ⚠️ **Note on Current Project Status** ⚠️
 The project has completed power-on, basic GoTo, guiding, and real-world imaging verification with an actual imaging payload of approximately 13kg. The total RMS of PHD2 during the stable guiding period is typically around 0.4″ to 0.6″, although results may vary depending on the assembly, payload, and environment.
 
-# ✨ Key Features
+## ✨ Key Features
 | **Feature** | **Description** |
 | :----- | :----- |
 | Mount Type | German Equatorial Mount (GEM) |
@@ -42,7 +42,7 @@ The project has completed power-on, basic GoTo, guiding, and real-world imaging 
 | Estimated Weight | 9.5 kg (including dovetail saddle and latitude base) |
 | Measured Guiding Performance | PHD2 total RMS typically around 0.4″ to 0.6″ during stable guiding |
 
-# Project Description
+## Project Description
 
 The core components of this DIY harmonic equatorial mount are used industrial Leaderdrive harmonic reducers. The design is also compatible with equivalent 25-100 harmonic reducers.
 ![image.png](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/3D-Views/1.png)
@@ -51,7 +51,7 @@ The core components of this DIY harmonic equatorial mount are used industrial Le
 ![image.jpg](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/3D-Views/4.jpg)
 ![image.jpg](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/3D-Views/2.jpg)
 
-# 🌌 Field Imaging and Guiding Test
+## Field Imaging and Guiding Test
 
 The imaging target was **Herschel 36**
 
@@ -79,7 +79,7 @@ The imaging target was **Herschel 36**
 - [ ] Long unguided intrinsic periodic-error testing with guide corrections and dithering disabled
 - [ ] Long-duration imaging validation at different focal lengths, exposure times, and environmental conditions
 
-## 📈 PHD2 Guiding Test
+## PHD2 Guiding Test
 
 ### Test Configuration
 
@@ -130,7 +130,7 @@ In the frequency analysis, the selected low-frequency component has a period of 
 
 </details>
 
-# ✨ Key Features
+## ✨Key Features
 | **Feature** | **Description** |
 | :----- | :----- |
 | Mount Type | German Equatorial Mount (GEM) |
@@ -156,7 +156,7 @@ The main structural components of this project rely heavily on custom fabricatio
 
 ---
 
-## 🔌 Electronics Overview
+## 🔌Electronics Overview
 
 The control system features a completely custom design, built around a compact architecture, and includes:
 
@@ -182,7 +182,7 @@ The control system features a completely custom design, built around a compact a
 
 All circuit schematics and PCB layouts—which feature strictly controlled safety clearances, via dimensions, and high-current trace widths—were designed using open-source tools. You can order the PCBs directly from [JLC PCB](https://member.jlc.com/?spm=PCB.Homepage) or modify the designs to suit your specific requirements.
 
-## 💻 Firmware Configuration and Flashing
+## 💻Firmware Configuration and Flashing
 
 The main controller for the harmonic equatorial mount features an **ESP32-WROOM-32UE (16MB)** module. This high-capacity core not only effortlessly runs the complex [OnStep / OnStepX](https://onstep.groups.io/g/main/wiki) firmware but also provides ample storage space for built-in star catalogs, high-precision pointing models, and a feature-rich Smart Web UI.
 
@@ -190,7 +190,7 @@ Please refer to [Firmware_Setup.EN.md](https://github.com/Leo-John233/DIY-Harmon
 
 ---
 
-## 🛠️ Mechanical Assembly Guide
+## 🛠️Mechanical Assembly Guide
 
 Please refer to [Assembly.EN.md](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/hardware/Assembly.EN.md)
 
