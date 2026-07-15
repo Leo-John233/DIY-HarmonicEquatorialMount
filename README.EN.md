@@ -33,9 +33,9 @@ The key advantages of this DIY harmonic equatorial mount include:
 - 🧰 **Cost-Effective** — The total build cost is under 3,000 RMB, with the cost of custom-machined parts amounting to less than 1,500 RMB.
 - 🪶 **Relatively Portable** — Weighs 7.5 kg (excluding base)
 - 🏗️ **Easy to Build** — Designed for makers with basic tools
-- 💪 **High Performance** — Sub-arcsecond PHD2 closed-loop guiding and field imaging have been verified
+- 💪 **High Performance** — PHD2 guide satellite imaging test completed
 - ⚠️ **Note on Current Project Status** ⚠️
-The project has completed power-on, basic GoTo, guiding, and field imaging with an actual payload of approximately 13 kg. During stable guiding intervals, the PHD2 total RMS was typically around 0.4″ to 0.6″. Results may vary with assembly, payload, and environmental conditions.
+The project has completed power-on, basic GoTo, guiding and field imaging with an actual payload of approximately 13 kg. During stable guiding intervals, the PHD2 total RMS was typically around 0.4″ to 0.6″. Results may vary with assembly, payload, and environmental conditions.
 
 
 # 🌌 Field Imaging and Guiding Test
@@ -54,15 +54,15 @@ The imaging target was **Herschel 36**
 
 ## Current Validation Status
 
-- [x] Controller power-up and basic communication
-- [x] OnStep ASCOM connection
-- [x] Basic GoTo and sidereal tracking
-- [x] PHD2 calibration and closed-loop guiding
-- [x] Dither and settling
-- [x] Continuous guiding record of approximately 52 min 45 s
-- [x] Herschel 36 field imaging with an actual payload of approximately 13 kg
-- [ ] Multi-night repeat testing with different payloads and center-of-gravity positions
-- [ ] Systematic comparison between counterweighted and counterweight-free configurations
+- [√] Controller power-up and basic communication
+- [√] OnStep ASCOM connection
+- [√] Basic GoTo and sidereal tracking
+- [√] PHD2 calibration and closed-loop guiding
+- [√] Dither and settling
+- [√] Continuous guiding record of approximately 52 min 45 s
+- [√] Herschel 36 field imaging with an actual payload of approximately 13 kg
+- [√] Multi-night repeat testing with different payloads and center-of-gravity positions
+- [√] Systematic comparison between counterweighted and counterweight-free configurations
 - [ ] Long unguided intrinsic periodic-error testing with guide corrections and dithering disabled
 - [ ] Long-duration imaging validation at different focal lengths, exposure times, and environmental conditions
 
