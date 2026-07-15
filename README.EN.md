@@ -15,6 +15,33 @@ This project employs a combination of open-source licenses, with separate licens
 
 Having grown weary of the weight of my EQ3D equatorial mount, I planned to replace it with a lighter and more portable harmonic mount. Commercial harmonic mounts are expensive, especially when compared with the specifications achievable through a DIY build. This project was therefore created to combine precision, portability, and cost-effectiveness without compromising performance.
 
+This project aims to address several critical issues commonly encountered in amateur astronomy equipment:
+- The high cost of commercially manufactured mounts.
+- A lack of openness and flexibility in design.
+- Excessive complexity or incompatibility with individual equipment setups.
+
+The key advantages of this DIY harmonic equatorial mount include:
+- 🧰 **Cost-Effective** — The total build cost is under 3,000 RMB, with the cost of custom-machined parts amounting to less than 1,500 RMB.
+- 🪶 **Relatively Portable** — Weighs 7.5 kg excluding the latitude base.
+- 🏗️ **Easy to Build** — Designed for makers with basic tools.
+- 💪 **High Performance** — PHD2 guide satellite imaging test completed.
+- ⚠️ **Note on Current Project Status** ⚠️
+The project has completed power-on, basic GoTo, guiding, and real-world imaging verification with an actual imaging payload of approximately 13kg. The total RMS of PHD2 during the stable guiding period is typically around 0.4″ to 0.6″, although results may vary depending on the assembly, payload, and environment.
+
+# ✨ Key Features
+| **Feature** | **Description** |
+| :----- | :----- |
+| Mount Type | German Equatorial Mount (GEM) |
+| Drive Type | Harmonic Drive + Belt Drive + 42 Stepper Motor |
+| Payload Capacity | Design target of up to 30 kg with counterweights and 20–25 kg without counterweights; approximately 13 kg has been verified through field imaging |
+| Harmonic Drive Model | Leaderdrive LHS-25-100-C-III |
+| Control System | OnStep / OnStepx |
+| Connectivity | USB-B; Wi-Fi; Bluetooth; Integrated DS3231SN Real-Time Clock Chip |
+| Hardware Features | RA Axis Brake; RA/DEC Axis Photoelectric Limit Sensors; DEC/RA Axis Photoelectric Home Sensors;<br>Simultaneous compatibility with both Step/Dir and SPI driver modes (i.e., compatible with TMC2209 and TMC5160 drivers); 12V/24V Input |
+| Estimated Build Cost | 2500–2900 RMB |
+| Estimated Weight | 9.5 kg (including dovetail saddle and latitude base) |
+| Measured Guiding Performance | PHD2 total RMS typically around 0.4″ to 0.6″ during stable guiding |
+
 # Project Description
 
 The core components of this DIY harmonic equatorial mount are used industrial Leaderdrive harmonic reducers. The design is also compatible with equivalent 25-100 harmonic reducers.
@@ -23,20 +50,6 @@ The core components of this DIY harmonic equatorial mount are used industrial Le
 ![image.jpg](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/3D-Views/5.JPG)
 ![image.jpg](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/3D-Views/4.jpg)
 ![image.jpg](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/3D-Views/2.jpg)
-
-This project aims to address several critical issues commonly encountered in amateur astronomy equipment:
-- The high cost of commercially manufactured mounts.
-- A lack of openness and flexibility in design.
-- Excessive complexity or incompatibility with individual equipment setups.
-
-The key advantages of this DIY harmonic equatorial mount include:
-- 🧰 **Cost-Effective** — The total build cost is under 3,000 RMB, with the cost of custom-machined parts amounting to less than 1,500 RMB.
-- 🪶 **Relatively Portable** — Weighs 7.5 kg (excluding base)
-- 🏗️ **Easy to Build** — Designed for makers with basic tools
-- 💪 **High Performance** — PHD2 guide satellite imaging test completed
-- ⚠️ **Note on Current Project Status** ⚠️
-The project has completed power-on, basic GoTo, guiding and field imaging with an actual payload of approximately 13 kg. During stable guiding intervals, the PHD2 total RMS was typically around 0.4″ to 0.6″. Results may vary with assembly, payload, and environmental conditions.
-
 
 # 🌌 Field Imaging and Guiding Test
 

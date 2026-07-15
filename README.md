@@ -12,19 +12,19 @@
 
 若参考了该项目希望能够指明参考来源，注明原作者，保持开源精神，欢迎大家在此基础上进行改进和创新，但请勿将本项目的设计用于商业用途，除非您获得了明确许可
 
-## 🛑 致各位试图拿本开源项目“创业”的商业奇才们
+## 🛑致各位试图拿本开源项目“创业”的商业奇才们
 本着开源精神，我非常欢迎大家复刻、交流和自己动手做着玩，但如果您是抱着“低价造个赤道仪拿去卖”的伟大商业宏图，并且打算把原作者当免费技术顾问的，请仔细阅读以下几点：
 
-**🚫 本项目不提供“保姆级开厂培训”**
+**🚫本项目不提供“保姆级开厂培训”**
 开源提供的是设计本身，不是您商业化流水线上的免费技术支持，如果您连最基本的“水平轴承在哪”、“圆弧槽是干啥用的”都看不明白，连 STP 文件导入 SolidWorks 都不知道怎么处理，建议先去补习一下基础的机械常识，我不负责为您解答“怎么装”、“怎么动”、“怎么改”，更不负责给您的工厂流水线工人做技术培训，请不要把原作者当成您的“免费技术顾问”，如果您不懂机械设计，请先学会自己看图纸，学会自己分析问题，学会自己解决问题
 
-**✂️ 魔改出了 Bug，请自己背锅**
+**✂️魔改出了 Bug，请自己背锅**
 把模型等比缩放、乱改减速机孔位，改完之后跑来跟我抱怨“俯仰调节机构装不上”、“没法适配”、“太难理解”？拜托，自己魔改导致的问题，请不要跑来怪原作者，我都开源了，您还指望我给您的“定制缩水版”做免费 Debug 吗？
 
-**💰 嫌贵别用，用了别嫌**
+**💰嫌贵别用，用了别嫌**
 一边刷着小红书觉得这套开源设计“好高级”，一边又跑来跟我吐槽用这套方案“成本涨了200块”、“太麻烦了”，觉得贵、觉得麻烦，您可以不用，既然决定要抄这套作业去赚钱，就别在原作者面前哭穷了，毕竟我也不想看到您辛辛苦苦开了个工厂，结果因为技术问题被客户投诉了还跑来找我背锅
 
-**⚖️ 友情普法警告（小心友商法务）**
+**⚖️友情警告**
 想拿这套类似结构随便改个外观就去大规模量产售卖？自己做着玩大家其乐融融，但如果要量产商用，请自己评估好侵权风险，别怪我没提醒过您，出了事请自己承担，别拉上我，开源不等于“免费商用”，如果您想拿去商用，请自己搞定技术壁垒，做好侵权风险评估，做好售后服务准备，做好质量控制准备，做好客户投诉处理准备，做好工厂管理准备，做好资金链管理准备，做好一切商业化运营的准备，不要到时候出了问题还跑来怪原作者
 
 大家都很忙，祝您的“平价赤道仪”大卖，Peace & Love
@@ -36,17 +36,8 @@
 
 由于我厌倦了 EQ3D 赤道仪的沉重，我计划用更轻便的谐波赤道仪来替换它。然而市面上的谐波赤道仪价格较高，尤其是与 DIY 可实现的规格相比，因此这个项目就此诞生。该谐波赤道仪旨在不牺牲性能的前提下，兼顾高精度、便携性和经济性
 
-## 项目描述
-
-自制谐波赤道仪的核心部件为 Leaderdrive 拆机二手工业谐波减速器，也适用于同规格的 25-100 谐波减速器
-![image.png](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/3D-Views/1.png)
-![image.jpg](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/3D-Views/3.jpg)
-![image.jpg](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/3D-Views/5.JPG)
-![image.jpg](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/3D-Views/4.jpg)
-![image.jpg](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/3D-Views/2.jpg)
-
 该项目旨在解决业余天文设备中的关键问题：
-- 成品赤道仪价格高昂
+- 成品支架价格高昂
 - 缺乏开放性和灵活性
 - 复杂性或与个人设置的不兼容
 
@@ -56,8 +47,30 @@
 - 🏗️**易于搭建**——专为拥有基本工具的创客设计
 - 💪**高性能**——已完成PHD2导星拍摄测试
 - ⚠️**关于当前项目状态的说明**⚠️
-该项目已完成通电、基础 GoTo、导星和约 13 kg 实际成像负载下的实拍验证。稳定导星时段的 PHD2 总 RMS 通常约为 0.4″ 至 0.6″，不同装配、负载和环境下的结果可能有所差异
+该项目已完成通电、基础 GoTo、导星和约13kg实际成像负载下的实拍验证，稳定导星时段的 PHD2 总 RMS 通常约为 0.4″ 至 0.6″，不同装配、负载和环境下的结果可能有所差异
 
+# ✨主要特点
+| **特征** | **描述** |
+| :----- | :----- |
+| 安装类型 | GEM德式赤道仪 |
+| 传动类型 | 谐波减速器+皮带传动+42步进电机 |
+| 有效载重 | 设计最大载重 30 kg（建议配重），无配重设计载重 20-25 kg，当前已完成约 13 kg 实拍验证 |
+| 减速器类型 | leaderdrive LHS-25-100-C-III |
+| 控制系统 | OnStep/OnStepx |
+| 连接类型 | USB-B；WIFI；蓝牙；集成DS3231SN时钟芯片 |
+| 硬件功能 | RA轴制动器；RA/DEC轴光电传感器限位；DEC/RA轴光电传感器原点；<br>同时兼容step/dir，spi两种驱动模式(即兼容tmc2209，tmc5160)；12/24v输入 |
+| 预计成本 | 2500-2900 RMB |
+| 预计重量 | 9.5 kg（包含鸠尾槽和纬度座） |
+| 已测导星表现 | 稳定时段 PHD2 总 RMS 通常约为 0.4″ 至 0.6″ |
+
+## 项目描述
+
+自制谐波赤道仪的核心部件为 Leaderdrive 拆机二手工业谐波减速器，也适用于同规格的 25-100 谐波减速器
+![image.png](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/3D-Views/1.png)
+![image.jpg](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/3D-Views/3.jpg)
+![image.jpg](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/3D-Views/5.JPG)
+![image.jpg](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/3D-Views/4.jpg)
+![image.jpg](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/3D-Views/2.jpg)
 
 ## 实拍与导星测试
 
