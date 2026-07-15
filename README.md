@@ -65,7 +65,7 @@
 
 ---
 
-## 项目描述
+## 最终成效
 
 自制谐波赤道仪的核心部件为 Leaderdrive 拆机二手工业谐波减速器，也适用于同规格的 25-100 谐波减速器
 ![image.png](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/3D-Views/1.png)
@@ -73,6 +73,8 @@
 ![image.jpg](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/3D-Views/5.JPG)
 ![image.jpg](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/3D-Views/4.jpg)
 ![image.jpg](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/3D-Views/2.jpg)
+
+---
 
 ## 实拍与导星测试
 

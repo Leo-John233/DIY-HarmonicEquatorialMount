@@ -44,7 +44,7 @@ The project has completed power-on, basic GoTo, guiding, and real-world imaging 
 
 ---
 
-## Project Description
+## Final Results
 
 The core components of this DIY harmonic equatorial mount are used industrial Leaderdrive harmonic reducers. The design is also compatible with equivalent 25-100 harmonic reducers.
 ![image.png](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/3D-Views/1.png)
@@ -52,6 +52,8 @@ The core components of this DIY harmonic equatorial mount are used industrial Le
 ![image.jpg](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/3D-Views/5.JPG)
 ![image.jpg](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/3D-Views/4.jpg)
 ![image.jpg](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/3D-Views/2.jpg)
+
+---
 
 ## Field Imaging and Guiding Test
 
