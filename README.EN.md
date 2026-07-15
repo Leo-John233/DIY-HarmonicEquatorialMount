@@ -35,7 +35,7 @@ The key advantages of this DIY harmonic equatorial mount include:
 - 🏗️ **Easy to Build** — Designed for makers with basic tools
 - 💪 **High Performance** — Sub-arcsecond PHD2 closed-loop guiding and field imaging have been verified
 - ⚠️ **Note on Current Project Status** ⚠️
-The project has completed power-on, basic GoTo, closed-loop guiding, and field imaging with an actual payload of approximately 13 kg. During stable guiding intervals, the PHD2 total RMS was typically around 0.4″ to 0.6″. Results may vary with assembly, payload, and environmental conditions.
+The project has completed power-on, basic GoTo, guiding, and field imaging with an actual payload of approximately 13 kg. During stable guiding intervals, the PHD2 total RMS was typically around 0.4″ to 0.6″. Results may vary with assembly, payload, and environmental conditions.
 
 
 # 🌌 Field Imaging and Guiding Test
@@ -46,7 +46,7 @@ The imaging target was **Herschel 36**
 
 | **Imaging Item** | **Configuration** |
 | :----- | :----- |
-| Main imaging system | Fully modified steel-tube Xiaohei Newtonian with an MPCC coma corrector |
+| Main imaging system | Sky-Watcher BKP 150/750 with an MPCC coma corrector |
 | Main camera | Nikon D7000 |
 | Guide camera | ZWO ASI662MC |
 | Actual imaging payload | Approximately 13 kg |
@@ -96,7 +96,7 @@ During normal use, the total RMS during stable guiding was typically around 0.4�
 
 - **The two axes were well balanced during stable guiding**: RA RMS was 0.43″ and Dec RMS was 0.50″, with only a small difference between the axes and no clear indication of sustained single-axis oscillation. The total RMS of 0.66″ corresponds to approximately 0.22 guide-camera pixels at 2.99″/px, including approximately 0.14 px in RA and 0.17 px in Dec
 - **The higher RMS in the complete log was driven mainly by transient Dec deviations**: The complete-log RA RMS was 0.45″, which is close to the stable interval and indicates broadly consistent long-duration RA behavior. Dec RMS increased to 0.82″, suggesting that dither, settling, the light breeze, or a small number of outlier peaks mainly affected the Dec statistics. It does not mean that Dec continuously tracked at an error of 0.82″ during stable operation
-- **Stable closed-loop guiding was maintained under an actual payload of approximately 13 kg**: With the fully modified Xiaohei Newtonian, Nikon D7000, MPCC, and guide system installed, the stable interval showed no obvious divergence or sustained mechanical oscillation. This indicates that the present structural rigidity, transmission control, and guiding response are sufficient for practical imaging with this tested setup
+- **Stable guiding was maintained under an actual payload of approximately 13 kg**: With the fully modified Sky-Watcher BKP 150/750, Nikon D7000, MPCC, and guide system installed, the stable interval showed no obvious divergence or sustained mechanical oscillation. This indicates that the present structural rigidity, transmission control, and guiding response are sufficient for practical imaging with this tested setup
 - **The 0.2 s guide exposure demonstrates fast correction response**: A short exposure can respond quickly to tracking deviations, but it is also more sensitive to seeing and brief disturbances. The observed 0.4″ to 0.6″ range should therefore be treated as a measured result for this specific equipment, parameter set, and environment rather than a fixed value for every operating condition
 - **The frequency-domain result is not a direct measurement of intrinsic periodic error**: The selected low-frequency component had a period of approximately 2206.6 s and a displayed amplitude of approximately 0.1″. Because the data came from a closed-loop guiding log containing low-frequency drift, dither, and settling, the result can only be used to inspect frequency components and cannot be identified directly as the intrinsic periodic error of the harmonic reducer
 
