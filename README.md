@@ -151,20 +151,6 @@
 
 </details>
 
-## ✨主要特点
-| **特征** | **描述** |
-| :----- | :----- |
-| 安装类型 | GEM德式赤道仪 |
-| 传动类型 | 谐波减速器+皮带传动+42步进电机 |
-| 有效载重 | 设计最大载重 30 kg（建议配重），无配重设计载重 20-25 kg，当前已完成约 13 kg 实拍验证 |
-| 减速器类型 | leaderdrive LHS-25-100-C-III |
-| 控制系统 | OnStep/OnStepx |
-| 连接类型 | USB-B；WIFI；蓝牙；集成DS3231SN时钟芯片 |
-| 硬件功能 | RA轴制动器；RA/DEC轴光电传感器限位；DEC/RA轴光电传感器原点；<br>同时兼容step/dir，spi两种驱动模式(即兼容tmc2209，tmc5160)；12/24v输入 |
-| 预计成本 | 2200-2600 RMB |
-| 预计重量 | 9.5 kg（包含鸠尾槽和纬度座） |
-| 已测导星表现 | 稳定时段 PHD2 总 RMS 通常约为 0.4″ 至 0.6″ |
-
 ## 🔗 物料清单 (BOM)
 
 请参阅 [BOM.md](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/tree/main/BOM)

@@ -130,20 +130,6 @@ In the frequency analysis, the selected low-frequency component has a period of 
 
 </details>
 
-## ✨Key Features
-| **Feature** | **Description** |
-| :----- | :----- |
-| Mount Type | German Equatorial Mount (GEM) |
-| Drive Type | Harmonic Drive + Belt Drive + 42 Stepper Motor |
-| Payload Capacity | Design target of up to 30 kg with counterweights and 20–25 kg without counterweights; approximately 13 kg has been verified through field imaging |
-| Harmonic Drive Model | Leaderdrive LHS-25-100-C-III |
-| Control System | OnStep / OnStepx |
-| Connectivity | USB-B; Wi-Fi; Bluetooth; Integrated DS3231SN Real-Time Clock Chip |
-| Hardware Features | RA Axis Brake; RA/DEC Axis Photoelectric Limit Sensors; DEC/RA Axis Photoelectric Home Sensors;<br>Simultaneous compatibility with both Step/Dir and SPI driver modes (i.e., compatible with TMC2209 and TMC5160 drivers); 12V/24V Input |
-| Estimated Build Cost | 2200–2600 RMB |
-| Estimated Weight | 9.5 kg (including dovetail saddle and latitude base) |
-| Measured Guiding Performance | PHD2 total RMS typically around 0.4″ to 0.6″ during stable guiding |
-
 ## 🔗 Bill of Materials (BOM)
 
 Please refer to [BOM.md](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/tree/main/BOM)
