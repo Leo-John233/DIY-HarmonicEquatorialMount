@@ -3,7 +3,7 @@
   <a href="./Firmware_Setup.EN.md"><img src="https://img.shields.io/badge/English-4285F4.svg?style=flat&logo=googletranslate&logoColor=white" alt="English"></a>
 </div>
 
-谐波赤道仪主控采用 **ESP32-WROOM-32E16N（16MB 闪存版）**这款大容量核心能够稳定运行复杂的 [OnStep / OnStepX](https://onstep.groups.io/g/main/wiki) 固件
+谐波赤道仪主控采用 **ESP32-WROOM-32E16N（16MB 闪存版）** 这款大容量核心能够稳定运行复杂的 [OnStep / OnStepX](https://onstep.groups.io/g/main/wiki) 固件
 
 ## ⚙️ 编译环境与主板设置（至关重要）
 
