@@ -11,13 +11,13 @@ This project employs a combination of open-source licenses, with separate licens
 *   **Hardware** (e.g., PCB designs, schematics, mechanical 3D models): Licensed under the [CERN Open Hardware Licence Version 2 - Strongly Reciprocal (CERN-OHL-S v2)](LICENSE-CERN). For detailed information, please refer to the `LICENSE-CERN` file.
 
 ---
-# DIY Harmonic Equatorial Mount (Power-on Verified; Awaiting Field Testing)
+# DIY Harmonic Equatorial Mount (Field Imaging and Guiding Verified)
 
-Having grown weary of the sheer weight of my EQ3D equatorial mount, I planned to replace it with a lighter, more portable harmonic mount. However, commercially available harmonic mounts are prohibitively expensive (especially when compared to the specifications achievable via DIY). Thus, this project was born: a harmonic equatorial mount capable of delivering high precision, portability, and cost-effectiveness—all without compromising on performance.
+Having grown weary of the weight of my EQ3D equatorial mount, I planned to replace it with a lighter and more portable harmonic mount. Commercial harmonic mounts are expensive, especially when compared with the specifications achievable through a DIY build. This project was therefore created to combine precision, portability, and cost-effectiveness without compromising performance.
 
 # Project Description
 
-The core component of this homemade harmonic equatorial mount—the harmonic reducer—is based on a used, industrial-grade unit salvaged from a Leaderdriver assembly. (Note: This design is also compatible with harmonic reducers of the same specifications purchased on Taobao—e.g., the "25-100" model.)
+The core components of this DIY harmonic equatorial mount are used industrial Leaderdrive harmonic reducers. The design is also compatible with equivalent 25-100 harmonic reducers.
 ![image.png](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/3D-Views/1.png)
 ![image.jpg](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/3D-Views/3.jpg)
 ![image.jpg](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/pictures/3D-Views/5.JPG)
@@ -33,22 +33,104 @@ The key advantages of this DIY harmonic equatorial mount include:
 - 🧰 **Cost-Effective** — The total build cost is under 3,000 RMB, with the cost of custom-machined parts amounting to less than 1,500 RMB.
 - 🪶 **Relatively Portable** — Weighs 7.5 kg (excluding base)
 - 🏗️ **Easy to Build** — Designed for makers with basic tools
-- 💪 **High Performance** — Precise tracking (sub-arcsecond RMS), no counterweights required
+- 💪 **High Performance** — Sub-arcsecond PHD2 closed-loop guiding and field imaging have been verified
 - ⚠️ **Note on Current Project Status** ⚠️
-This project has currently only reached the stage of power-on and simple "GoTo" testing; no actual astrophotography tests have been conducted yet.
+The project has completed power-on, basic GoTo, closed-loop guiding, and field imaging with an actual payload of approximately 13 kg. During stable guiding intervals, the PHD2 total RMS was typically around 0.4″ to 0.6″. Results may vary with assembly, payload, and environmental conditions.
+
+
+# 🌌 Field Imaging and Guiding Test
+
+The imaging target was **Herschel 36**
+
+![Herschel 36](pictures/Test-Results/Herschel-36.jpg)
+
+| **Imaging Item** | **Configuration** |
+| :----- | :----- |
+| Main imaging system | Fully modified steel-tube Xiaohei Newtonian with an MPCC coma corrector |
+| Main camera | Nikon D7000 |
+| Guide camera | ZWO ASI662MC |
+| Actual imaging payload | Approximately 13 kg |
+| Test conditions | Light breeze |
+
+## Current Validation Status
+
+- [x] Controller power-up and basic communication
+- [x] OnStep ASCOM connection
+- [x] Basic GoTo and sidereal tracking
+- [x] PHD2 calibration and closed-loop guiding
+- [x] Dither and settling
+- [x] Continuous guiding record of approximately 52 min 45 s
+- [x] Herschel 36 field imaging with an actual payload of approximately 13 kg
+- [ ] Multi-night repeat testing with different payloads and center-of-gravity positions
+- [ ] Systematic comparison between counterweighted and counterweight-free configurations
+- [ ] Long unguided intrinsic periodic-error testing with guide corrections and dithering disabled
+- [ ] Long-duration imaging validation at different focal lengths, exposure times, and environmental conditions
+
+## 📈 PHD2 Guiding Test
+
+### Test Configuration
+
+| Item | Configuration |
+| :--- | :--- |
+| Test software | PHD2 Guiding 2.6.13 |
+| Mount connection | OnStep ASCOM |
+| Guide camera | ZWO ASI662MC |
+| Guide focal length | 200 mm |
+| Guide-camera pixel size | 2.9 μm |
+| Guide image scale | Approximately 2.99″/px |
+| Guide exposure | 0.2 s |
+| Actual imaging payload | Approximately 13 kg |
+| Test conditions | Light breeze |
+| Complete log duration | 52 min 45 s |
+
+### Results Summary
+
+| Test interval | RA RMS | Dec RMS | Total RMS | Notes |
+| :--- | ---: | ---: | ---: | :--- |
+| Stable guiding interval | 0.43″ | 0.50″ | 0.66″ | PHD2 real-time statistics screenshot |
+| Complete 52 min 45 s log | 0.45″ | 0.82″ | 0.94″ | Includes dither, settling, and a small number of outlier peaks |
+
+During normal use, the total RMS during stable guiding was typically around 0.4″ to 0.6″. The representative stable screenshot shows a total RMS of 0.66″, while the complete log reached 0.94″ because it includes dither, settling, and a small number of outlier peaks
+
+### Results Analysis
+
+- **The two axes were well balanced during stable guiding**: RA RMS was 0.43″ and Dec RMS was 0.50″, with only a small difference between the axes and no clear indication of sustained single-axis oscillation. The total RMS of 0.66″ corresponds to approximately 0.22 guide-camera pixels at 2.99″/px, including approximately 0.14 px in RA and 0.17 px in Dec
+- **The higher RMS in the complete log was driven mainly by transient Dec deviations**: The complete-log RA RMS was 0.45″, which is close to the stable interval and indicates broadly consistent long-duration RA behavior. Dec RMS increased to 0.82″, suggesting that dither, settling, the light breeze, or a small number of outlier peaks mainly affected the Dec statistics. It does not mean that Dec continuously tracked at an error of 0.82″ during stable operation
+- **Stable closed-loop guiding was maintained under an actual payload of approximately 13 kg**: With the fully modified Xiaohei Newtonian, Nikon D7000, MPCC, and guide system installed, the stable interval showed no obvious divergence or sustained mechanical oscillation. This indicates that the present structural rigidity, transmission control, and guiding response are sufficient for practical imaging with this tested setup
+- **The 0.2 s guide exposure demonstrates fast correction response**: A short exposure can respond quickly to tracking deviations, but it is also more sensitive to seeing and brief disturbances. The observed 0.4″ to 0.6″ range should therefore be treated as a measured result for this specific equipment, parameter set, and environment rather than a fixed value for every operating condition
+- **The frequency-domain result is not a direct measurement of intrinsic periodic error**: The selected low-frequency component had a period of approximately 2206.6 s and a displayed amplitude of approximately 0.1″. Because the data came from a closed-loop guiding log containing low-frequency drift, dither, and settling, the result can only be used to inspect frequency components and cannot be identified directly as the intrinsic periodic error of the harmonic reducer
+- **Overall conclusion**: The current data demonstrate stable sub-arcsecond closed-loop guiding under an actual imaging payload of approximately 13 kg in a light breeze, together with a successful Herschel 36 imaging test. They do not replace multi-night repeat testing, payload comparisons, or a long unguided periodic-error measurement
+
+<details>
+<summary>View the PHD2 screenshots and frequency-domain analysis</summary>
+
+![PHD2 stable guiding](pictures/Test-Results/PHD2-Guiding-0.66arcsec.png)
+
+![PHD2 complete log](pictures/Test-Results/PHD2-Log-52m45s.png)
+
+![PHD2 drift-corrected analysis](pictures/Test-Results/PHD2-Drift-Corrected.png)
+
+![PHD2 frequency analysis](pictures/Test-Results/PHD2-Frequency-Analysis.png)
+
+The curve with RA guide corrections removed still contains low-frequency drift, dither, and settling effects. Its full peak-to-peak range must not be treated as the intrinsic periodic error of the harmonic reducer
+
+In the frequency analysis, the selected low-frequency component has a period of approximately 2206.6 s and a displayed amplitude of approximately 0.1″. This result is useful only for inspecting frequency components and does not replace a long unguided periodic-error test with guide corrections and dithering disabled
+
+</details>
 
 # ✨ Key Features
 | **Feature** | **Description** |
 | :----- | :----- |
 | Mount Type | German Equatorial Mount (GEM) |
 | Drive Type | Harmonic Drive + Belt Drive + 42 Stepper Motor |
-| Payload Capacity | Max. 30kg (counterweights recommended); 20–25kg without counterweights |
+| Payload Capacity | Design target of up to 30 kg with counterweights and 20–25 kg without counterweights; approximately 13 kg has been verified through field imaging |
 | Harmonic Drive Model | Leaderdrive LHS-25-100-C-III |
 | Control System | OnStep / OnStepx |
 | Connectivity | USB-B; Wi-Fi; Bluetooth; Integrated DS3231SN Real-Time Clock Chip |
 | Hardware Features | RA Axis Brake; RA/DEC Axis Photoelectric Limit Sensors; DEC/RA Axis Photoelectric Home Sensors;<br>Simultaneous compatibility with both Step/Dir and SPI driver modes (i.e., compatible with TMC2209 and TMC5160 drivers); 12V/24V Input |
 | Estimated Build Cost | 2200–2600 RMB |
-| Estimated Weight | 9.5kg (including dovetail saddle and latitude base) |
+| Estimated Weight | 9.5 kg (including dovetail saddle and latitude base) |
+| Measured Guiding Performance | PHD2 total RMS typically around 0.4″ to 0.6″ during stable guiding |
 
 ## 🔗 Bill of Materials (BOM)
 
@@ -92,7 +174,7 @@ All circuit schematics and PCB layouts—which feature strictly controlled safet
 
 The main controller for the harmonic equatorial mount features an **ESP32-WROOM-32UE (16MB)** module. This high-capacity core not only effortlessly runs the complex [OnStep / OnStepX](https://onstep.groups.io/g/main/wiki) firmware but also provides ample storage space for built-in star catalogs, high-precision pointing models, and a feature-rich Smart Web UI.
 
-Please refer to [Firmware_Setup.EN.md](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/software/Firmware_Setup.md) for a complete list of `Config.h` parameters and detailed pin mappings.
+Please refer to [Firmware_Setup.EN.md](https://github.com/Leo-John233/DIY-Harmonic-Equatorial-Mount/blob/main/software/Firmware_Setup.EN.md) for a complete list of `Config.h` parameters and detailed pin mappings.
 
 ---
 
