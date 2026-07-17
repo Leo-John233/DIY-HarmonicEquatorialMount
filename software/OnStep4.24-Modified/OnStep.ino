@@ -38,7 +38,7 @@
 #define FirmwareDate          __DATE__
 #define FirmwareVersionMajor  4
 #define FirmwareVersionMinor  24      // 次版本号 0 到 99
-#define FirmwareVersionPatch  "s"     // 补丁版本，例如主.次 补丁: 1.3c
+#define FirmwareVersionPatch  "v8"     // 补丁版本，例如主.次 补丁: 1.3c
 #define FirmwareVersionConfig 3       // 内部使用，用于跟踪配置文件更改
 #define FirmwareName          "On-Step"
 #define FirmwareTime          __TIME__
@@ -50,13 +50,18 @@
 int Axis1_LimitLock = 0; 
 int Axis2_LimitLock = 0;
 unsigned long lastLimitTriggerTime = 0; // [新增] 用于非阻塞消抖计时
-// GOTO 被限位/安全逻辑中断：用于阻止 MoveTo 把安全中断伪装成 GOTO done
-bool gotoAbortedBySafety = false;
-// 安全中断后坐标不再可信，必须重新回原点后才允许 GOTO
-bool gotoRequiresHomeAfterAbort = false;
-// 开机强制回零锁
-bool systemHasHomed = false; 
-// --- [修改结束] -----------------------
+// GOTO 安全中断分类。该状态与 HOME_SENSE / LIMIT_SENSE 的编译配置无关，
+// 避免关闭传感器后安全中断被误判为正常 GOTO 完成。
+enum GotoAbortState { GOTO_ABORT_NONE, GOTO_ABORT_RECOVERABLE, GOTO_ABORT_POSITION_LOST };
+GotoAbortState gotoAbortState = GOTO_ABORT_NONE;
+
+// 当前步数坐标是否仍可作为真实机械位置使用。
+// 标准 OnStep 启动假定赤道仪位于已知起始位置；MOTOR_HOLD_ON_BOOT 会显式改为 false。
+bool mountPositionTrusted = true;
+
+// 物理限位、驱动器故障或失败的传感器回零会置位。
+// HOME_SENSE 开启时可通过自动回零恢复；HOME_SENSE 关闭时可在人工放回零位后执行 Set Home 恢复。
+bool positionRecoveryRequired = false;
 
 // 首次上传时，OnStep 会自动初始化 nv 存储器（EEPROM）中的一系列设置。
 // 此选项会强制再次进行初始化。
@@ -349,12 +354,11 @@ void setup() {
 
     VLF("MSG: Motor hold on boot - drivers enabled, tracking off, home required");
 
-    // 开机后不认为已经真实回原点
-    systemHasHomed = false;
-
-    // 开机清理上一次安全中断残留
-    gotoAbortedBySafety = false;
-    gotoRequiresHomeAfterAbort = false;
+    // 开机只保持电机时不假定机械位置可信。无论是否安装 HOME_SENSE，
+    // 都需要自动回零或人工放回零位后执行 Set Home 才允许 GOTO/Tracking。
+    mountPositionTrusted = false;
+    positionRecoveryRequired = false;
+    gotoAbortState = GOTO_ABORT_NONE;
 
     // 清理限位方向锁
     Axis1_LimitLock = 0;
@@ -470,7 +474,7 @@ void loop2() {
   if (isHoming()) {
       wasHoming = true; // 系统正在回原点
   } else if (wasHoming) {
-      // 不在主循环里直接把 systemHasHomed 置 true。
+      // 不在主循环里直接把 mountPositionTrusted 置 true。
       // 真实自动回零成功只由 Home.ino 的 FH_DONE 阶段确认，避免回零失败也误解锁。
       wasHoming = false;
   }
@@ -515,7 +519,7 @@ void loop2() {
       if (lastTrackingState == TrackingSidereal) {
         origTargetAxis1.fixed+=fstepAxis1.fixed;
         origTargetAxis2.fixed+=fstepAxis2.fixed;
-        // 中天翻转或同步期间不推进目标位置
+        // 中天翻转分阶段交接期间不推进无效的中间目标
         if (getInstrPierSide() == PierSideEast || getInstrPierSide() == PierSideWest) {
           cli();
           targetAxis1.fixed+=fstepAxis1.fixed;
@@ -621,10 +625,15 @@ void loop2() {
         // =========================================================
         // 5. 逃离判断 (Escape Logic)
         // =========================================================
-        bool isEscaping = false;
-        
-        if (Axis1_LimitLock != 0 && currentMotionDir1 != 0 && currentMotionDir1 != Axis1_LimitLock) isEscaping = true;
-        if (Axis2_LimitLock != 0 && currentMotionDir2 != 0 && currentMotionDir2 != Axis2_LimitLock) isEscaping = true;
+        // 只有所有正在移动且已锁定的轴都朝脱离限位方向运动时，
+        // 才允许继续。旧逻辑使用 OR，可能出现一个轴在逃离、另一个轴仍
+        // 朝限位方向运动却被整体判定为安全。
+        const bool axis1MovingIntoLimit =
+          Axis1_LimitLock != 0 && currentMotionDir1 != 0 && currentMotionDir1 == Axis1_LimitLock;
+        const bool axis2MovingIntoLimit =
+          Axis2_LimitLock != 0 && currentMotionDir2 != 0 && currentMotionDir2 == Axis2_LimitLock;
+        const bool hasEscapeMotion = currentMotionDir1 != 0 || currentMotionDir2 != 0;
+        const bool isEscaping = hasEscapeMotion && !axis1MovingIntoLimit && !axis2MovingIntoLimit;
 
         // =========================================================
         // 6. 执行急停
@@ -632,14 +641,8 @@ void loop2() {
         if (!isEscaping) {
             generalError = ERR_LIMIT_SENSE;
 
-#if HOME_SENSE != OFF
-            // 只有启用 HOME_SENSE 时，限位中断后才进入“必须重新真实回零”的增强保护。
-            // HOME_SENSE 关闭时，不引入回零锁，尽量保持 OnStep 4.24 原始控制路径。
-            systemHasHomed = false;
-            gotoRequiresHomeAfterAbort = true;
-            if (trackingState == TrackingMoveTo) gotoAbortedBySafety = true;
-#endif
-
+            // 物理限位属于硬中断。是否需要重新回零统一由
+            // stopSlewingAndTracking(SS_LIMIT_HARD) 判定，避免多处重复修改状态。
             stopGuideAxis1(); 
             stopGuideAxis2();
             stopSlewingAndTracking(SS_LIMIT_HARD);
@@ -858,13 +861,20 @@ void loop2() {
 // SS_LIMIT_AXIS2_MAX 停止 GOTO + 螺旋搜寻 + 跟踪，并停止/阻止正向的赤纬/高度角导星
 void stopSlewingAndTracking(StopSlewActions ss) {
 
+  // 物理限位和驱动器故障统一使用 SS_LIMIT_HARD。它们可能造成丢步，
+  // 因此位置可信状态必须与 HOME_SENSE / LIMIT_SENSE 是否启用完全解耦。
+  if (ss == SS_LIMIT_HARD) {
+    mountPositionTrusted = false;
+    positionRecoveryRequired = true;
+    if (trackingState == TrackingMoveTo) gotoAbortState = GOTO_ABORT_POSITION_LOST;
+  }
+
   if (trackingState == TrackingMoveTo) {
 
-    // GOTO 过程中，所有非普通停止都视为安全中断。
-    // 这样 MoveTo 不会把当前位置伪装成正常目标完成。
-    if (ss != SS_ALL_FAST) {
-      gotoAbortedBySafety = true;
-      gotoRequiresHomeAfterAbort = true;
+    // 软件轴范围、中天和高度限制属于可恢复中止；硬故障状态优先级更高，
+    // 不能被后续的软件停止原因覆盖。
+    if (ss != SS_ALL_FAST && gotoAbortState == GOTO_ABORT_NONE) {
+      gotoAbortState = GOTO_ABORT_RECOVERABLE;
     }
 
     if (!abortGoto) {

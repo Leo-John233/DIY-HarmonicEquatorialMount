@@ -273,55 +273,52 @@ void moveTo() {
           homeMount=false;
           if (AXIS2_TANGENT_ARM == OFF) atHome=true;
 
-#if HOME_SENSE != OFF
-          // HOME_SENSE 启用时，homeMount 完成代表重新建立可信 Home 基准。
-          systemHasHomed = true;
-          gotoAbortedBySafety = false;
-          gotoRequiresHomeAfterAbort = false;
-#endif
+          // A successful coordinate/Home-sensor homing operation re-establishes
+          // the open-loop position reference.
+          mountPositionTrusted=true;
+          positionRecoveryRequired=false;
+          gotoAbortState=GOTO_ABORT_NONE;
 #if LIMIT_SENSE != OFF
-          // LIMIT_SENSE 启用时，Home 完成后清除限位方向锁。
-          Axis1_LimitLock = 0;
-          Axis2_LimitLock = 0;
+          Axis1_LimitLock=0;
+          Axis2_LimitLock=0;
 #endif
 
           VLF("MSG: Homing done");
         } else {
+          // Preserve the stock motion-completion path, but do not report a
+          // safety-aborted move as a successful GOTO.
+          if (gotoAbortState != GOTO_ABORT_NONE) {
+            trackingSyncSeconds=0;
 
-#if HOME_SENSE != OFF
-          // 安全中断：只在 HOME_SENSE 回零锁启用时，阻止伪装成 GOTO done。
-          if (gotoAbortedBySafety) {
+            if (gotoAbortState == GOTO_ABORT_POSITION_LOST ||
+                positionRecoveryRequired || !mountPositionTrusted) {
+              trackingState=TrackingNone;
+              lastTrackingState=TrackingNone;
+              mountPositionTrusted=false;
+              positionRecoveryRequired=true;
 
-            trackingState = TrackingNone;
-            lastTrackingState = TrackingNone;
-
+              SiderealClockSetInterval(siderealInterval);
+              setDeltaTrackingRate();
+              if (generalError == ERR_NONE) generalError=ERR_LIMIT_SENSE;
+              VLF("MSG: Goto failed by hard safety abort; position recovery required");
+            } else {
+              trackingState=lastTrackingState;
+              lastTrackingState=TrackingNone;
+              SiderealClockSetInterval(siderealInterval);
+              setDeltaTrackingRate();
+              VLF("MSG: Goto stopped by recoverable software limit");
+            }
+            gotoAbortState=GOTO_ABORT_NONE;
+          } else {
+            trackingState=lastTrackingState;
+            lastTrackingState=TrackingNone;
             SiderealClockSetInterval(siderealInterval);
             setDeltaTrackingRate();
-
-            if (generalError == ERR_NONE) generalError = ERR_LIMIT_SENSE;
-
-            gotoAbortedBySafety = false;
-            gotoRequiresHomeAfterAbort = true;
-            systemHasHomed = false;
-
-            VLF("MSG: Goto failed by safety abort; home required");
-
-          } else
-#endif
-          {
-
-            // 正常 GOTO 完成
-            trackingState = lastTrackingState;
-            lastTrackingState = TrackingNone;
-
-            SiderealClockSetInterval(siderealInterval);
-            setDeltaTrackingRate();
-
             VLF("MSG: Goto done");
 
             // allow 5 seconds for synchronization of coordinates after goto ends
             if (trackingState == TrackingSidereal) {
-              trackingSyncSeconds = 5;
+              trackingSyncSeconds=5;
               VLF("MSG: Tracking sync started");
             }
           }

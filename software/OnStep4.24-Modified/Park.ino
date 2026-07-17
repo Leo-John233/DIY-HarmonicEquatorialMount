@@ -7,6 +7,7 @@ CommandErrors setPark() {
   if (parkStatus == Parked)             return CE_PARKED;
   if (isSlewing())                      return CE_MOUNT_IN_MOTION;
   if (faultAxis1 || faultAxis2)         return CE_SLEW_ERR_HARDWARE_FAULT;
+  if (!mountPositionTrusted || positionRecoveryRequired) return CE_SLEW_ERR_IN_STANDBY;
 
   VLF("MSG: Setting park position");
 
@@ -225,6 +226,11 @@ CommandErrors unPark(bool withTrackingOn) {
   posAxis2=targetAxis2.part.m;
   sei();
   atHome=false;
+
+  // 已保存的 Park 坐标和指向模型成功恢复后，位置重新可信。
+  mountPositionTrusted = true;
+  positionRecoveryRequired = false;
+  gotoAbortState = GOTO_ABORT_NONE;
   
   // set Meridian Flip behaviour to match mount type
   #if MOUNT_TYPE == GEM

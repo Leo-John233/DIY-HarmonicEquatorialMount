@@ -22,6 +22,10 @@ void checkHome() {
       if (guideDirAxis1 == 'e' || guideDirAxis1 == 'w') guideDirAxis1='b';
       if (guideDirAxis2 == 'n' || guideDirAxis2 == 's') guideDirAxis2='b';
       safetyLimitsOn=true;
+      // 传感器回零未完成时不能继续信任开环步数位置。
+      mountPositionTrusted = false;
+      positionRecoveryRequired = true;
+      gotoAbortState = GOTO_ABORT_NONE;
       findHomeMode=FH_OFF;
     } else {
       if (digitalRead(Axis1_HOME) != PierSideStateAxis1 && (guideDirAxis1 == 'e' || guideDirAxis1 == 'w')) StopAxis1();
@@ -119,21 +123,21 @@ void checkHome() {
     #else    
       initStartPosition(); // 此时望远镜处于“传感器位置 + 偏置量”处，以此处作为真正的绝对零位
       atHome=true;
-      // 真实回原点完成后，坐标基准重新可信。
-      // 这一段只在 HOME_SENSE != OFF 的自动回零状态机中执行。
-      systemHasHomed = true;
-      gotoAbortedBySafety = false;
-      gotoRequiresHomeAfterAbort = false;
-#if LIMIT_SENSE != OFF
-      // 只有启用 LIMIT_SENSE 时才清理限位方向锁。
-      Axis1_LimitLock = 0;
-      Axis2_LimitLock = 0;
-#endif
-      abortGoto = 0;
-      lastTrackingState = TrackingNone;
-      abortTrackingState = TrackingNone;
-      generalError = ERR_NONE;
     #endif
+
+    // 真实回原点完成后，所有结构类型都重新建立可信坐标基准。
+    mountPositionTrusted = true;
+    positionRecoveryRequired = false;
+    gotoAbortState = GOTO_ABORT_NONE;
+#if LIMIT_SENSE != OFF
+    // 只有启用 LIMIT_SENSE 时才清理限位方向锁。
+    Axis1_LimitLock = 0;
+    Axis2_LimitLock = 0;
+#endif
+    abortGoto = 0;
+    lastTrackingState = TrackingNone;
+    abortTrackingState = TrackingNone;
+    generalError = ERR_NONE;
   }
 }
 void StopAxis1() {
@@ -162,6 +166,8 @@ CommandErrors goHome(bool fast) {
   
 #if HOME_SENSE != OFF
   if (e != CE_NONE && e != CE_SLEW_ERR_IN_STANDBY) return e;
+  // 自动回零是恢复 standby/位置不可信状态的合法通道。
+  if (e == CE_SLEW_ERR_IN_STANDBY) e = CE_NONE;
 
   if (findHomeMode != FH_OFF) return CE_MOUNT_IN_MOTION;
 
@@ -169,6 +175,11 @@ CommandErrors goHome(bool fast) {
   // 停止跟踪
   abortTrackingState=trackingState;
   trackingState=TrackingNone;
+
+  // 自动回零开始后，直到 FH_DONE 都不再信任原开环坐标。
+  mountPositionTrusted = false;
+  positionRecoveryRequired = true;
+  gotoAbortState = GOTO_ABORT_NONE;
 
   // decide direction to guide
   // 决定引导方向
@@ -288,12 +299,11 @@ CommandErrors setHome() {
   #endif
   if (!pecRecorded) pecStatus=IgnorePEC;
 
-#if HOME_SENSE != OFF
-  // 有 HOME_SENSE 时，手动 setHome 也重新建立可信 Home 基准。
-  systemHasHomed = true;
-  gotoAbortedBySafety = false;
-  gotoRequiresHomeAfterAbort = false;
-#endif
+  // Set Home 的语义是用户确认机械位置与定义的 Home 坐标一致，
+  // 因此无论是否安装 HOME_SENSE 都可重新建立可信坐标基准。
+  mountPositionTrusted = true;
+  positionRecoveryRequired = false;
+  gotoAbortState = GOTO_ABORT_NONE;
 
 #if LIMIT_SENSE != OFF
   // 有 LIMIT_SENSE 时，手动 setHome 后清除物理限位方向锁。
@@ -301,11 +311,9 @@ CommandErrors setHome() {
   Axis2_LimitLock = 0;
 #endif
 
-#if HOME_SENSE != OFF || LIMIT_SENSE != OFF
   // 清理上一次安全中断或限位导致的残留状态。
   abortGoto = 0;
   generalError = ERR_NONE;
-#endif
 
   return CE_NONE;
 }

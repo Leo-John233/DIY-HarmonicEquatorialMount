@@ -1329,7 +1329,7 @@ void processCommands() {
       //            Returns: Nothing
       if ((command[1] == 'e' || command[1] == 'w') && parameter[0] == 0) {
 
-        // 手动移动不受 HOME_SENSE / systemHasHomed 限制；
+        // 手动移动不受位置可信状态限制；
         // 只有启用 LIMIT_SENSE 时，才拦截已经锁死的物理限位危险方向。
         bool blockedByLimitAxis1 = false;
 #if LIMIT_SENSE != OFF
@@ -1352,7 +1352,7 @@ void processCommands() {
       //            Returns: Nothing
       if ((command[1] == 'n' || command[1] == 's') && parameter[0] == 0) {
 
-        // 手动移动不受 HOME_SENSE / systemHasHomed 限制；
+        // 手动移动不受位置可信状态限制；
         // 只有启用 LIMIT_SENSE 时，才拦截已经锁死的物理限位危险方向。
         bool blockedByLimitAxis2 = false;
 #if LIMIT_SENSE != OFF
@@ -1409,33 +1409,20 @@ void processCommands() {
 //              8=already in motion
 //              9=unspecified error
 if (command[1] == 'S' && parameter[0] == 0)  {
-        // GOTO 回零锁只绑定 HOME_SENSE。HOME_SENSE 关闭时，走 OnStep 4.24 原始 GOTO 控制路径。
-        bool blockGotoUntilHome = false;
-#if HOME_SENSE != OFF
-        blockGotoUntilHome = (!systemHasHomed || gotoRequiresHomeAfterAbort);
-#endif
-
-        if (blockGotoUntilHome) {
-            reply[0] = '3';   // standby / not ready
-            reply[1] = 0;
-            boolReply = false;
-            supress_frame = true;
-            commandError = CE_SLEW_ERR_IN_STANDBY;
-        } else {
-            // 原本正常 GOTO 逻辑从这里开始
-            newTargetRA = origTargetRA;
-            newTargetDec = origTargetDec;
+        // 所有 GOTO 入口统一由 validateGoto() 检查位置可信状态，
+        // 这里不再根据 HOME_SENSE 建立一套容易被其他命令绕过的旁路逻辑。
+        newTargetRA = origTargetRA;
+        newTargetDec = origTargetDec;
 #if TELESCOPE_COORDINATES == TOPOCENTRIC
-            topocentricToObservedPlace(&newTargetRA, &newTargetDec);
+        topocentricToObservedPlace(&newTargetRA, &newTargetDec);
 #endif
-            CommandErrors e=goToEqu(newTargetRA,newTargetDec);
-            if (e >= CE_GOTO_ERR_BELOW_HORIZON && e <= CE_GOTO_ERR_UNSPECIFIED) reply[0]=(char)(e-CE_GOTO_ERR_BELOW_HORIZON)+'1';
-            if (e == CE_NONE) reply[0]='0';
-            reply[1]=0;
-            boolReply=false;
-            supress_frame=true;
-            commandError=e;
-        }
+        CommandErrors e=goToEqu(newTargetRA,newTargetDec);
+        if (e >= CE_GOTO_ERR_BELOW_HORIZON && e <= CE_GOTO_ERR_UNSPECIFIED) reply[0]=(char)(e-CE_GOTO_ERR_BELOW_HORIZON)+'1';
+        if (e == CE_NONE) reply[0]='0';
+        reply[1]=0;
+        boolReply=false;
+        supress_frame=true;
+        commandError=e;
       } else
 
 //  :MN#   Goto current RA/Dec but East of the Pier (within meridian limit overlap for GEM mounts)
@@ -2103,61 +2090,60 @@ if (command[1] == 'S' && parameter[0] == 0)  {
 //                    1 on success
 
       if (command[0] == 'T' && parameter[0] == 0) {
-#if HOME_SENSE != OFF
-        // Tracking 回零锁只绑定 HOME_SENSE。HOME_SENSE 关闭时，走 OnStep 4.24 原始 Tracking 控制路径。
-        if (!systemHasHomed || gotoRequiresHomeAfterAbort) {
-          reply[0] = 0;
-          boolReply = false;
-          supress_frame = true;
+        // Tracking enable 同样只依赖位置是否可信，而不依赖是否安装传感器。
+        const bool trackingBlockedUntilRecovery =
+          (command[1] == 'e' && (!mountPositionTrusted || positionRecoveryRequired));
+
+        if (trackingBlockedUntilRecovery) {
+          // 保持 boolReply=true，让命令处理器立即返回字符 '0'。
+          // 旧逻辑提前 return 且 suppress frame，ASCOM/NINA 只能等待到超时。
           commandError = CE_SLEW_ERR_IN_STANDBY;
-          return;
-        }
-#endif
-          // ==========================================================
+        } else {
 #if MOUNT_TYPE != ALTAZM
-        static bool dualAxis=false;
-        if (command[1] == 'o') { rateCompensation=RC_FULL_RA; setTrackingRate(DefaultTrackingRate); } else // turn full compensation on, defaults to base sidereal tracking rate
-        if (command[1] == 'r') { rateCompensation=RC_REFR_RA; setTrackingRate(DefaultTrackingRate); } else // turn refraction compensation on, defaults to base sidereal tracking rate
-        if (command[1] == 'n') { rateCompensation=RC_NONE; dualAxis=false; setTrackingRate(DefaultTrackingRate); } else // turn refraction off, sidereal tracking rate resumes
-        if (command[1] == '1') { dualAxis=false; } else                                                      // turn off dual axis tracking
-        if (command[1] == '2') { dualAxis=true;  } else                                                      // turn on dual axis tracking
+          static bool dualAxis=false;
+          if (command[1] == 'o') { rateCompensation=RC_FULL_RA; setTrackingRate(DefaultTrackingRate); } else // turn full compensation on, defaults to base sidereal tracking rate
+          if (command[1] == 'r') { rateCompensation=RC_REFR_RA; setTrackingRate(DefaultTrackingRate); } else // turn refraction compensation on, defaults to base sidereal tracking rate
+          if (command[1] == 'n') { rateCompensation=RC_NONE; dualAxis=false; setTrackingRate(DefaultTrackingRate); } else // turn refraction off, sidereal tracking rate resumes
+          if (command[1] == '1') { dualAxis=false; } else                                                      // turn off dual axis tracking
+          if (command[1] == '2') { dualAxis=true;  } else                                                      // turn on dual axis tracking
 #endif
-        if (command[1] == '+') { siderealInterval-=HzCf*(0.02); boolReply=false; } else
-        if (command[1] == '-') { siderealInterval+=HzCf*(0.02); boolReply=false; } else
-        if (command[1] == 'S') { setTrackingRate(0.99726956632); rateCompensation=RC_NONE; boolReply=false; } else // solar tracking rate 60Hz
-        if (command[1] == 'L') { setTrackingRate(0.96236513150); rateCompensation=RC_NONE; boolReply=false; } else // lunar tracking rate 57.9Hz
-        if (command[1] == 'Q') { setTrackingRate(DefaultTrackingRate); boolReply=false; } else                     // sidereal tracking rate
-        if (command[1] == 'R') { siderealInterval=masterSiderealInterval; boolReply=false; } else                  // reset master sidereal clock interval
-        if (command[1] == 'K') { setTrackingRate(0.99953004401); rateCompensation=RC_NONE; boolReply=false; } else // king tracking rate 60.136Hz
-        if (command[1] == 'e') {
-          if (isParked()) commandError=CE_PARKED; else
-          if (trackingState == TrackingMoveTo || trackingSyncInProgress() || isHoming()) commandError=CE_MOUNT_IN_MOTION; else
-          {
-            initGeneralError();
-            trackingState=TrackingSidereal;
-            enableStepperDrivers();
+          if (command[1] == '+') { siderealInterval-=HzCf*(0.02); boolReply=false; } else
+          if (command[1] == '-') { siderealInterval+=HzCf*(0.02); boolReply=false; } else
+          if (command[1] == 'S') { setTrackingRate(0.99726956632); rateCompensation=RC_NONE; boolReply=false; } else // solar tracking rate 60Hz
+          if (command[1] == 'L') { setTrackingRate(0.96236513150); rateCompensation=RC_NONE; boolReply=false; } else // lunar tracking rate 57.9Hz
+          if (command[1] == 'Q') { setTrackingRate(DefaultTrackingRate); boolReply=false; } else                     // sidereal tracking rate
+          if (command[1] == 'R') { siderealInterval=masterSiderealInterval; boolReply=false; } else                  // reset master sidereal clock interval
+          if (command[1] == 'K') { setTrackingRate(0.99953004401); rateCompensation=RC_NONE; boolReply=false; } else // king tracking rate 60.136Hz
+          if (command[1] == 'e') {
+            if (isParked()) commandError=CE_PARKED; else
+            if (trackingState == TrackingMoveTo || trackingSyncInProgress() || isHoming()) commandError=CE_MOUNT_IN_MOTION; else
+            {
+              initGeneralError();
+              trackingState=TrackingSidereal;
+              enableStepperDrivers();
+            }
+          } else
+          if (command[1] == 'd') {
+            if (trackingState == TrackingMoveTo || trackingSyncInProgress() || isHoming()) commandError=CE_MOUNT_IN_MOTION; else trackingState=TrackingNone;
+          } else
+            commandError=CE_CMD_UNKNOWN;
+
+#if MOUNT_TYPE != ALTAZM
+          if ( dualAxis && rateCompensation == RC_REFR_RA)   rateCompensation=RC_REFR_BOTH;
+          if (!dualAxis && rateCompensation == RC_REFR_BOTH) rateCompensation=RC_REFR_RA;
+          if ( dualAxis && rateCompensation == RC_FULL_RA)   rateCompensation=RC_FULL_BOTH;
+          if (!dualAxis && rateCompensation == RC_FULL_BOTH) rateCompensation=RC_FULL_RA;
+#endif
+
+          // Only burn the new rate if changing the sidereal interval
+          if (commandError == CE_NONE && (command[1] == '+' || command[1] == '-' || command[1] == 'R')) {
+            nv.writeLong(EE_siderealInterval,siderealInterval);
+            SiderealClockSetInterval(siderealInterval);
+            cli(); siderealRate=siderealInterval/stepsPerSecondAxis1; sei();
           }
-        } else
-        if (command[1] == 'd') {
-          if (trackingState == TrackingMoveTo || trackingSyncInProgress() || isHoming()) commandError=CE_MOUNT_IN_MOTION; else trackingState=TrackingNone;
-        } else
-          commandError=CE_CMD_UNKNOWN;
 
-#if MOUNT_TYPE != ALTAZM
-       if ( dualAxis && rateCompensation == RC_REFR_RA)   rateCompensation=RC_REFR_BOTH;
-       if (!dualAxis && rateCompensation == RC_REFR_BOTH) rateCompensation=RC_REFR_RA;
-       if ( dualAxis && rateCompensation == RC_FULL_RA)   rateCompensation=RC_FULL_BOTH;
-       if (!dualAxis && rateCompensation == RC_FULL_BOTH) rateCompensation=RC_FULL_RA;
-#endif
-
-        // Only burn the new rate if changing the sidereal interval
-        if (commandError == CE_NONE && (command[1] == '+' || command[1] == '-' || command[1] == 'R')) {
-          nv.writeLong(EE_siderealInterval,siderealInterval);
-          SiderealClockSetInterval(siderealInterval);
-          cli(); siderealRate=siderealInterval/stepsPerSecondAxis1; sei();
+          setDeltaTrackingRate();
         }
-
-        setDeltaTrackingRate();
 
       } else
      

@@ -68,23 +68,24 @@
 #define TELESCOPE_TEMPERATURE         OFF //    OFF, DS1820, n. Where n is the DS1820 s/n for focuser temperature.            Adjust
                                           //    OFF, DS1820, n. n是DS1820的序列号，用于检测调焦器处的温度（做温补）
 
-#define HOME_SENSE                    OFF //    OFF, ON*, ON_PULLUP、ON_PULLUND Automatically detect and use home switches. For GEM mode only.      Option
+#define HOME_SENSE              ON_PULLUP //    OFF, ON*, ON_PULLUP、ON_PULLUND Automatically detect and use home switches. For GEM mode only.      Option
+                                               // OFF is supported: after a hard position-loss fault, manually return to Home and use Set Home.
                                           //    OFF, ON*. 自动检测并使用原点开关（霍尔/光电等）, 仅限 GEM (德式) 模式
 #define HOME_SENSE_STATE_AXIS1        LOW //   HIGH, State when clockwise of home position, as seen from front. Rev. w/LOW.   Adjust
                                           //   HIGH, 从前面看，当轴位于原点顺时针方向时的电平状态。用LOW反转
 #define HOME_SENSE_STATE_AXIS2       HIGH //   HIGH, State when clockwise of home position, as seen from above. Rev. w/LOW.   Adjust
                                           //   HIGH, 从上面看，当轴位于原点顺时针方向时的电平状态。用LOW反转
                                           //   Signal state reverses when travel moves ccw past the home position.
-                                          //   当转动越过原点逆时针方向时，信号状态会反转
-
-// 偏置零位配置(由于传感器感应区域宽度或传感器安装位置不在原点，可能需要设置偏置角度)                            
-#define HOME_OFFSET_AXIS1             0   //  n.n (度), 赤经/方位轴的偏置角度（支持正负号改变方向，0为不偏置）
-#define HOME_OFFSET_AXIS2             0   //  n.n (度), 赤纬/俯仰轴的偏置角度（支持正负号改变方向，0为不偏置）
-#define HOME_OFFSET_RATE              7   //  7, n. 偏置阶段使用的速度档位                            
+                                          //   当转动越过原点逆时针方向时，信号状态会反转       
+// 偏置零位配置                            
+#define HOME_OFFSET_AXIS1          -1.5   //  n.n (度), 赤经/方位轴的偏置角度（支持正负号改变方向，0为不偏置）
+#define HOME_OFFSET_AXIS2             1   //  n.n (度), 赤纬/俯仰轴的偏置角度（支持正负号改变方向，0为不偏置）
+#define HOME_OFFSET_RATE              8   //  7, n. 偏置阶段使用的速度档位                             <- 新增
                                           //  可选值通常为 1..9 档。
                                           //  提示：7 = 48x 恒星速（推荐，精找速度），8 = 半最大速，9 = 全速（Goto速度）
 
-#define LIMIT_SENSE                   OFF //    OFF, ON*, ON_PULLUP、ON_PULLUND limit sense switch close to Gnd stops gotos and/or tracking.         Option
+#define LIMIT_SENSE             ON_PULLUP //    OFF, ON*, ON_PULLUP、ON_PULLUND limit sense switch close to Gnd stops gotos and/or tracking.         Option
+                                               // OFF is supported, but removes physical switch protection; software limits remain active.
                                           //    OFF, ON* 限位开关。闭合接地时停止GOTO或跟踪
 #define LIMIT_SENSE_STATE             LOW //    LOW, For NO (normally open) switches, HIGH for NC (normally closed.)          Adjust
                                           //    LOW, 对应常开(NO)开关请使用 LOW 端子。如果使用多个此类开关，请将它们并联连接
@@ -157,8 +158,8 @@
 
 #define PIER_SIDE_SYNC_CHANGE_SIDES   OFF //    OFF, ON Allows sync to change pier side, for GEM mounts.                      Option
                                           //    OFF, ON 允许通过 Sync (同步) 命令改变当前记录的墩侧状态 (针对GEM)
-#define PIER_SIDE_PREFERRED_DEFAULT  BEST //   BEST, Stays on current side if possible. EAST or WEST switch if possible.      Option
-                                          //   BEST, 尽可能保持当前侧。EAST 或 WEST 尽可能切换到指定侧
+#define PIER_SIDE_PREFERRED_DEFAULT  EAST //    BEST, Stays on current side if possible. EAST or WEST switch if possible.      Option
+                                          //    BEST, 尽可能保持当前侧。EAST 或 WEST 尽可能切换到指定侧
 
 // 停机/泊车行为(PARKING BEHAVIOUR) ------------------------------------------ see https://onstep.groups.io/g/main/wiki/Configuration-Mount#PARKING
 #define STRICT_PARKING                 OFF//    OFF, ON Un-parking is only allowed if successfully parked.                    Option
@@ -168,7 +169,8 @@
 #define STEP_WAVE_FORM             SQUARE // SQUARE, PULSE Step signal wave form faster rates. SQUARE best signal integrity.  Adjust
                                           // SQUARE, PULSE 高速时的脉冲波形。SQUARE (方波) 信号最稳
 // 开机电机保持
-#define MOTOR_HOLD_ON_BOOT            OFF // 只使能驱动器，不启动 tracking，不建立 home 坐标
+#define MOTOR_HOLD_ON_BOOT             ON // 只使能驱动器，不启动 tracking，不建立可信坐标
+                                               // HOME_SENSE OFF 时需人工置于 Home 后执行 Set Home，才能 GOTO/Tracking
 
 // 步进驱动器型号说明 (也可以看 ~/OnStep/src/sd_drivers/Models.h 获取更多型号): 
 // A4988, DRV8825, LV8729, S109, SSS TMC2209*, TMC2130* **, 和 TMC5160* ***
@@ -183,14 +185,14 @@
 #define AXIS1_STEPS_PER_WORMROT     51200 //      12800, n. 蜗杆旋转一圈的步数 (仅用于 PEC 赤道仪模式)             <-Req'd
                                           //         n = (AXIS1_STEPS_PER_DEGREE * 360) / 最后一级减速比
 
-#define AXIS1_DRIVER_MODEL            OFF //    OFF, (见上文). 驱动器型号.                                        <-Often
+#define AXIS1_DRIVER_MODEL  TMC5160_QUIET //    OFF, (见上文). 驱动器型号.                                        <-Often
 #define AXIS1_DRIVER_MICROSTEPS       64  //    OFF, n. 跟踪时的细分模式.                                         <-Often
 #define AXIS1_DRIVER_MICROSTEPS_GOTO  32  //    OFF, n. GOTO (高速转向) 时的细分模式 (通常降低细分防丢步)            Option
 #define AXIS1_DRIVER_IHOLD            OFF //    OFF, n, (mA.) 静止时的电流。OFF 代表使用 IRUN 的一半                Option
 #define AXIS1_DRIVER_IRUN            1400 //    OFF, n, (mA.) 跟踪时的电流。根据电机/驱动调整                       Option
 #define AXIS1_DRIVER_IGOTO           1500 //    OFF, n, (mA.) GOTO时的电流。OFF 代表和 IRUN 一样.                  Option
 #define AXIS1_DRIVER_REVERSE          OFF //    OFF, ON 反转运动方向。或者你也可以把电机线反着接.                   <-Often
-#define AXIS1_DRIVER_STATUS           OFF //    OFF, TMC_SPI, HIGH, LOW.  轮询驱动器状态/故障.                     Option
+#define AXIS1_DRIVER_STATUS       TMC_SPI //    OFF, TMC_SPI, HIGH, LOW.  轮询驱动器状态/故障.                     Option
 
 #define AXIS1_LIMIT_MIN              -110 //  -180, n. n= -90..-270 (度). 赤道仪模式下的最小“时角”.                             Adjust
                                           //        n. n=-180..-360 (度). 经纬仪模式下的最小方位角.
@@ -202,7 +204,7 @@
 #define AXIS2_STEPS_PER_DEGREE  14222.222 //  同上，每度步数                                                       <-Req'd
                                           //         n = (stepper_steps * micro_steps * overall_gear_reduction)/360.0
 
-#define AXIS2_DRIVER_MODEL            OFF //    OFF, 同上.                                                        <-Often
+#define AXIS2_DRIVER_MODEL  TMC5160_QUIET //    OFF, 同上.                                                        <-Often
 #define AXIS2_DRIVER_MICROSTEPS       64  //    OFF, 跟踪细分.                                                    <-Often
 #define AXIS2_DRIVER_MICROSTEPS_GOTO  32  //    OFF, GOTO细分.                                                    Option
 #define AXIS2_DRIVER_IHOLD            OFF //    OFF, 静止电流.                                                     Option
@@ -210,7 +212,7 @@
 #define AXIS2_DRIVER_IGOTO           1300 //    OFF, GOTO电流.                                                     Option
 #define AXIS2_DRIVER_POWER_DOWN       OFF //    OFF, ON 停止移动10秒后，或最后一次<=1x导星10分钟后，自动断电.          Option
 #define AXIS2_DRIVER_REVERSE           ON //    OFF, ON 反转方向.                                                  <-Often
-#define AXIS2_DRIVER_STATUS           OFF //    OFF, TMC_SPI, HIGH, or LOW, 状态检测.                               Option
+#define AXIS2_DRIVER_STATUS       TMC_SPI //    OFF, TMC_SPI, HIGH, or LOW, 状态检测.                               Option
 #define AXIS2_TANGENT_ARM             OFF //    OFF, ON +limit range below. Set cntr w/[Reset Home] Return cntr w/[Find Home] Infreq
 
 #define AXIS2_LIMIT_MIN               -90 //    -90, n. n=-90..0 (度). 最小允许赤纬.                                 Infreq

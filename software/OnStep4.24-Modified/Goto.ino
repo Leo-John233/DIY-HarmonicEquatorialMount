@@ -10,6 +10,9 @@ CommandErrors validateGoto() {
   if (trackingState == TrackingMoveTo)         return CE_GOTO_ERR_GOTO;
   if (guideDirAxis1 || guideDirAxis2)          return CE_MOUNT_IN_MOTION;
   if (faultAxis1 || faultAxis2)                return CE_SLEW_ERR_HARDWARE_FAULT;
+  // A hard safety abort invalidates open-loop position.  Do not start another
+  // GOTO until Home/Set Home has re-established a trusted coordinate origin.
+  if (!mountPositionTrusted || positionRecoveryRequired) return CE_SLEW_ERR_IN_STANDBY;
   return CE_NONE;
 }
 
@@ -46,7 +49,9 @@ CommandErrors syncEqu(double RA, double Dec) {
 
   // validate
   CommandErrors e=validateGoto();
-  if (e == CE_SLEW_ERR_IN_STANDBY && atHome) { trackingState=TrackingSidereal; enableStepperDrivers(); e=validateGoto(); }
+  if (e == CE_SLEW_ERR_IN_STANDBY && atHome && mountPositionTrusted && !positionRecoveryRequired) {
+    trackingState=TrackingSidereal; enableStepperDrivers(); e=validateGoto();
+  }
   if (e != CE_NONE) return e;
   e=validateGotoCoords(HA,Dec,a);
   if (e != CE_NONE) return e;
@@ -241,7 +246,10 @@ CommandErrors goToEqu(double RA, double Dec) {
 
   // validate
   CommandErrors e=validateGoto();
-  if (e == CE_SLEW_ERR_IN_STANDBY && atHome && timeWasSet && dateWasSet) { trackingState=TrackingSidereal; enableStepperDrivers(); e=validateGoto(); }
+  if (e == CE_SLEW_ERR_IN_STANDBY && atHome && timeWasSet && dateWasSet &&
+      mountPositionTrusted && !positionRecoveryRequired) {
+    trackingState=TrackingSidereal; enableStepperDrivers(); e=validateGoto();
+  }
 #ifndef CE_GOTO_ERR_GOTO_OFF
   if (e == CE_GOTO_ERR_GOTO) { if (!abortGoto) abortGoto=StartAbortGoto; } 
 #endif
@@ -377,16 +385,16 @@ CommandErrors goTo(double thisTargetAxis1, double thisTargetAxis2, double altTar
   #endif
 #endif
   lastTrackingState=trackingState;
-  // 开机电机保持时 trackingState 是 TrackingNone。
-  // 但只要已经真实回原点，并且没有安全中断锁，合法 GOTO 完成后应该进入恒星跟踪。
-  // 这样 NINA Center 后续 Sync 不会因为 TrackingNone 失败。
+  // A valid GOTO started from Motor Hold should resume sidereal tracking when
+  // its coordinate reference is trusted.  This is independent of HOME_SENSE.
   if (lastTrackingState == TrackingNone &&
-    systemHasHomed &&
-    !gotoRequiresHomeAfterAbort &&
-    parkStatus != Parking &&
-    !isHoming()) {
-  lastTrackingState = TrackingSidereal;
+      mountPositionTrusted && !positionRecoveryRequired &&
+      parkStatus != Parking && !isHoming()) {
+    lastTrackingState=TrackingSidereal;
   }
+
+  // Clear only the completed recoverable status at the start of a new GOTO.
+  gotoAbortState=GOTO_ABORT_NONE;
 
   cli();
   trackingState=TrackingMoveTo;
