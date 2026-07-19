@@ -38,7 +38,7 @@
 #define FirmwareDate          __DATE__
 #define FirmwareVersionMajor  4
 #define FirmwareVersionMinor  24      // 次版本号 0 到 99
-#define FirmwareVersionPatch  "v8"     // 补丁版本，例如主.次 补丁: 1.3c
+#define FirmwareVersionPatch  "s"     // 补丁版本
 #define FirmwareVersionConfig 3       // 内部使用，用于跟踪配置文件更改
 #define FirmwareName          "On-Step"
 #define FirmwareTime          __TIME__
