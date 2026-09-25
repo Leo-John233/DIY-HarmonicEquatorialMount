@@ -617,7 +617,7 @@ void ST4() {
 #if ST4_HAND_CONTROL == ON
           if (waitingHome) waitingHomeContinue=true; else
           if (trackingState == TrackingMoveTo) {
-            // ST4 中止 Goto 后只恢复 Goto 前的跟踪状态。
+            // ST4 中止 Goto 后只恢复 Goto 前的跟踪状态
             gotoStartTrackingOnSuccess=false;
             if (!abortGoto) abortGoto=StartAbortGoto;
           } else
@@ -644,7 +644,7 @@ void ST4() {
 #if ST4_HAND_CONTROL == ON
           if (waitingHome) waitingHomeContinue=true; else
           if (trackingState == TrackingMoveTo) {
-            // ST4 中止 Goto 后只恢复 Goto 前的跟踪状态。
+            // ST4 中止 Goto 后只恢复 Goto 前的跟踪状态
             gotoStartTrackingOnSuccess=false;
             if (!abortGoto) abortGoto=StartAbortGoto;
           } else

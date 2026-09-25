@@ -261,7 +261,7 @@ void moveTo() {
         if (homeMount) {
           const GotoAbortState completedHomeState=gotoAbortState;
           if (completedHomeState != GOTO_ABORT_NONE) {
-            // 坐标 Home 被中断时不得解除正常运动锁。
+            // 坐标 Home 被中断时不得解除正常运动锁
             homeMount=false;
             trackingSyncSeconds=0;
             trackingState=TrackingNone;
@@ -308,7 +308,7 @@ void moveTo() {
             if (completedGotoState == GOTO_ABORT_NONE) VLF("MSG: Goto done");
             else VLF("MSG: Goto stopped");
 
-            // 仅未被安全状态分类的完成路径进入原版 GOTO 后同步窗口。
+            // 仅未被安全状态分类的完成路径进入原版 GOTO 后同步窗口
             if (completedGotoState == GOTO_ABORT_NONE && trackingState == TrackingSidereal) {
               trackingSyncSeconds=5;
               VLF("MSG: Tracking sync started");

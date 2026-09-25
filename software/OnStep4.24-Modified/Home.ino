@@ -16,7 +16,7 @@ unsigned long findHomeTimeout = 0L;
 unsigned long offsetTimeoutAxis1 = 0L;
 unsigned long offsetTimeoutAxis2 = 0L;
 
-// 可选的第三阶段：仅在至少一轴设置了偏置时调用。
+// 可选的第三阶段：仅在至少一轴设置了偏置时调用
 bool startHomeOffset() {
   findHomeMode = FH_OFFSET;
   double secPerDeg = 3600.0 / (double)guideRates[HOME_OFFSET_RATE];
@@ -112,7 +112,7 @@ void checkHome() {
   // =======================================================================
   if (findHomeMode == FH_IDLE2 && guideDirAxis1 == 0 && guideDirAxis2 == 0) {
     if (HOME_OFFSET_AXIS1 == 0.0 && HOME_OFFSET_AXIS2 == 0.0) {
-      // 不进入 FH_OFFSET，不读取偏置速度，也不启动偏置运动。
+      // 不进入 FH_OFFSET，不读取偏置速度，也不启动偏置运动
       offsetTimeoutAxis1 = 0;
       offsetTimeoutAxis2 = 0;
       findHomeMode = FH_DONE;

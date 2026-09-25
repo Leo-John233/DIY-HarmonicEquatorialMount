@@ -503,7 +503,7 @@ void loop() {
 }
 
 void loop2() {
-  // 每轮先接收命令，避免周期任务持续到期时停止指令得不到处理。
+  // 每轮先接收命令，避免周期任务持续到期时停止指令得不到处理
   processCommands();
 
 #if HOME_SENSE != OFF
@@ -598,7 +598,7 @@ void loop2() {
     if (limit_reading == LIMIT_SENSE_STATE) {
       
       lastLimitTriggerTime = currentTime;
-      // 回零期间只跳过限位制动，继续执行主循环中的其余任务。
+      // 回零期间只跳过限位制动，继续执行主循环中的其余任务
       const bool homing = isHoming();
       if (homing) {
         Axis1_LimitLock=0;

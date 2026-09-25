@@ -47,7 +47,7 @@
 #define LED_RETICLE                   OFF //    OFF, n. Where n=0..255 (0..100%) activates feature sets default brightness.   Option
                                           //    OFF, n. n=0..255 (0..100%) 开启极轴镜照明功能并设置默认亮度
 #define BUZZER                        OFF //    OFF, ON, n. Where n=100..6000 (Hz freq.) for piezo speaker. ON for buzzer.    Option
-                                          //    OFF, ON, n. n=100..6000 (Hz频率) 适用于压电喇叭。如果是普通有源蜂鸣器填ON
+                                          //    OFF, ON, n. n=100..6000 (Hz频率) 适用于压电喇叭如果是普通有源蜂鸣器填ON
 #define BUZZER_STATE_DEFAULT          OFF //    OFF, ON Start with piezo buzzer/speaker enabled.                              Option
                                           //    OFF, ON 启动时默认开启蜂鸣器/喇叭声音
 
@@ -63,7 +63,7 @@
 #define WEATHER                       OFF //    OFF, BME280 (I2C 0x77,) BME280_0x76, BME280_SPI (see pinmap for CS.)          Option
                                           //         BMP280 (I2C 0x77,) BMP280_0x76, BMP280_SPI (see pinmap for CS.)
                                           //         BME280 or BMP280 for temperature, pressure.  BME280 for humidity also.
-                                          //         BME280 或 BMP280 用于测量温度和压力。BME280 也可用于测量湿度。
+                                          //         BME280 或 BMP280 用于测量温度和压力BME280 也可用于测量湿度
                                           
 #define TELESCOPE_TEMPERATURE         OFF //    OFF, DS1820, n. Where n is the DS1820 s/n for focuser temperature.            Adjust
                                           //    OFF, DS1820, n. n是DS1820的序列号，用于检测调焦器处的温度（做温补）
@@ -72,9 +72,9 @@
                                                // OFF is supported: after a hard position-loss fault, manually return to Home and use Set Home.
                                           //    OFF, ON*. 自动检测并使用原点开关（霍尔/光电等）, 仅限 GEM (德式) 模式
 #define HOME_SENSE_STATE_AXIS1        LOW //   HIGH, State when clockwise of home position, as seen from front. Rev. w/LOW.   Adjust
-                                          //   HIGH, 从前面看，当轴位于原点顺时针方向时的电平状态。用LOW反转
+                                          //   HIGH, 从前面看，当轴位于原点顺时针方向时的电平状态用LOW反转
 #define HOME_SENSE_STATE_AXIS2       HIGH //   HIGH, State when clockwise of home position, as seen from above. Rev. w/LOW.   Adjust
-                                          //   HIGH, 从上面看，当轴位于原点顺时针方向时的电平状态。用LOW反转
+                                          //   HIGH, 从上面看，当轴位于原点顺时针方向时的电平状态用LOW反转
                                           //   Signal state reverses when travel moves ccw past the home position.
                                           //   当转动越过原点逆时针方向时，信号状态会反转       
 // 自动回零速度设置
@@ -89,10 +89,10 @@
 
 #define LIMIT_SENSE             ON_PULLUP //    OFF, ON*, ON_PULLUP、ON_PULLUND limit sense switch close to Gnd stops gotos and/or tracking.         Option
                                                // OFF is supported, but removes physical switch protection; software limits remain active.
-                                          //    OFF, ON* 限位开关。闭合接地时停止GOTO或跟踪
+                                          //    OFF, ON* 限位开关闭合接地时停止GOTO或跟踪
 #define LIMIT_SENSE_STATE             LOW //    LOW, For NO (normally open) switches, HIGH for NC (normally closed.)          Adjust
-                                          //    LOW, 对应常开(NO)开关请使用 LOW 端子。如果使用多个此类开关，请将它们并联连接
-                                          //    HIGH 对应常闭(NC)开关请使用 高电平 (HIGH) 。如果使用多个此类开关，请将它们串联起来
+                                          //    LOW, 对应常开(NO)开关请使用 LOW 端子如果使用多个此类开关，请将它们并联连接
+                                          //    HIGH 对应常闭(NC)开关请使用 高电平 (HIGH) 如果使用多个此类开关，请将它们串联起来
 
 #define PEC_SENSE                     OFF //    OFF, ON*, n, sense digital OR n=0 to 1023 (0 to 3.3V or 5V) analog threshold. Option
                                           //    OFF, ON*, n, 数字信号 OR n=0到1023 (0到3.3V/5V) 模拟阈值
@@ -110,7 +110,7 @@
 // *** It is up to you to verify the interface meets the electrical specifications of any connected device, use at your own risk ***
 // ***由您验证接口是否符合任何连接设备的电气规格，使用风险由您自行承担
 #define ST4_INTERFACE                 ON  //    OFF, ON, ON_PULLUP enables interface. <= 1X guides unless hand control mode.  Option
-                                          //    OFF, ON, ON_PULLUP 启用接口。<= 1X 倍速导星（除非在手柄模式）
+                                          //    OFF, ON, ON_PULLUP 启用接口<= 1X 倍速导星（除非在手柄模式）
                                           //         During goto btn press: aborts slew or continue meridian flip pause home
                                           //         在GOTO按钮按下期间：中止转向 或 继续中天翻转暂停回原点
 #define ST4_HAND_CONTROL              ON  //    OFF, ON for hand controller special features and SHC support.                 Option
@@ -124,7 +124,7 @@
 
 // 导星行为(GUIDING BEHAVIOUR) ------------------------------------------ see https://onstep.groups.io/g/main/wiki/Configuration-Mount#GUIDING
 #define GUIDE_TIME_LIMIT                0 //      0, No guide time limit. Or n. Where n=1..120 second time limit guard.       Adjust
-                                          //      0, 无导星时间限制。或 n=1..120 秒，防止信号卡死导致一直转
+                                          //      0, 无导星时间限制或 n=1..120 秒，防止信号卡死导致一直转
 #define GUIDE_DISABLE_BACKLASH        OFF //    OFF, Disable backlash takeup during guiding at <= 1X                          Option
                                           //    OFF, 在 <= 1X 导星修正时不进行反向间隙补偿（防止振荡）
 // 跟踪行为(TRACKING BEHAVIOUR) ---------------------------------------- see https://onstep.groups.io/g/main/wiki/Configuration-Mount#TRACKING
@@ -139,7 +139,7 @@
 
 // 转向行为(SLEWING BEHAVIOUR) ------------------------------------------ see https://onstep.groups.io/g/main/wiki/Configuration-Mount#SLEWING
 #define SLEW_RATE_BASE_DESIRED        6.0 //    1.0, n. Desired slew rate in deg/sec. Adjustable at run-time from            <-Req'd
-                                          //    1.0, n. 期望的 GOTO 速度 (度/秒)。运行时可在
+                                          //    1.0, n. 期望的 GOTO 速度 (度/秒)运行时可在
                                           //         1/2 to 2x this rate, and as MCU performace considerations require.
                                           //         0.5倍 到 2倍 之间调整，也受限于MCU性能
 #define SLEW_RATE_MEMORY               ON //    OFF, ON Remembers rates set across power cycles.                              Option
@@ -162,7 +162,7 @@
 #define PIER_SIDE_SYNC_CHANGE_SIDES   OFF //    OFF, ON Allows sync to change pier side, for GEM mounts.                      Option
                                           //    OFF, ON 允许通过 Sync (同步) 命令改变当前记录的墩侧状态 (针对GEM)
 #define PIER_SIDE_PREFERRED_DEFAULT  EAST //    BEST, Stays on current side if possible. EAST or WEST switch if possible.      Option
-                                          //    BEST, 尽可能保持当前侧。EAST 或 WEST 尽可能切换到指定侧
+                                          //    BEST, 尽可能保持当前侧EAST 或 WEST 尽可能切换到指定侧
 
 // 停机/泊车行为(PARKING BEHAVIOUR) ------------------------------------------ see https://onstep.groups.io/g/main/wiki/Configuration-Mount#PARKING
 #define STRICT_PARKING                 OFF//    OFF, ON Un-parking is only allowed if successfully parked.                    Option
@@ -170,7 +170,7 @@
 
 // 运动控制(MOTION CONTROL) ---------------------------------------------- see https://onstep.groups.io/g/main/wiki/Configuration-Mount#MOTION
 #define STEP_WAVE_FORM             SQUARE // SQUARE, PULSE Step signal wave form faster rates. SQUARE best signal integrity.  Adjust
-                                          // SQUARE, PULSE 高速时的脉冲波形。SQUARE (方波) 信号最稳
+                                          // SQUARE, PULSE 高速时的脉冲波形SQUARE (方波) 信号最稳
 // 回零策略与电机保持
 #define HOME_REQUIRED_ON_BOOT          ON // ON：开机后须先 Home/Set Home 才能正常 GOTO/跟踪；
                                           // OFF：沿用原版启动位置假定
@@ -182,8 +182,8 @@
 // 步进驱动器型号说明 (也可以看 ~/OnStep/src/sd_drivers/Models.h 获取更多型号): 
 // A4988, DRV8825, LV8729, S109, SSS TMC2209*, TMC2130* **, 和 TMC5160* ***
 // * = 加上 _QUIET 后缀 (例如 "TMC2130_QUIET") 表示开启 stealthChop 静音跟踪模式
-// ** = SSS TMC2130 如果你想软件设置电流(mA)，要把Vref电位器调到2.5V，而不是像通常那样调Vref来定电流。
-// *** = SSS TMC5160 必须在下面定义 AXISn_TMC_IRUN (IHOLD 等) 来设置电流。
+// ** = SSS TMC2130 如果你想软件设置电流(mA)，要把Vref电位器调到2.5V，而不是像通常那样调Vref来定电流
+// *** = SSS TMC5160 必须在下面定义 AXISn_TMC_IRUN (IHOLD 等) 来设置电流
 
 // 轴 1：赤经 / 方位(AXIS1 RA/AZM)
 // see https://onstep.groups.io/g/main/wiki/Configuration-Mount#AXIS1
@@ -195,10 +195,10 @@
 #define AXIS1_DRIVER_MODEL  TMC5160_QUIET //    OFF, (见上文). 驱动器型号.                                        <-Often
 #define AXIS1_DRIVER_MICROSTEPS       64  //    OFF, n. 跟踪时的细分模式.                                         <-Often
 #define AXIS1_DRIVER_MICROSTEPS_GOTO  32  //    OFF, n. GOTO (高速转向) 时的细分模式 (通常降低细分防丢步)            Option
-#define AXIS1_DRIVER_IHOLD            OFF //    OFF, n, (mA.) 静止时的电流。OFF 代表使用 IRUN 的一半                Option
-#define AXIS1_DRIVER_IRUN            1400 //    OFF, n, (mA.) 跟踪时的电流。根据电机/驱动调整                       Option
-#define AXIS1_DRIVER_IGOTO           1500 //    OFF, n, (mA.) GOTO时的电流。OFF 代表和 IRUN 一样.                  Option
-#define AXIS1_DRIVER_REVERSE          OFF //    OFF, ON 反转运动方向。或者你也可以把电机线反着接.                   <-Often
+#define AXIS1_DRIVER_IHOLD            OFF //    OFF, n, (mA.) 静止时的电流OFF 代表使用 IRUN 的一半                Option
+#define AXIS1_DRIVER_IRUN            1400 //    OFF, n, (mA.) 跟踪时的电流根据电机/驱动调整                       Option
+#define AXIS1_DRIVER_IGOTO           1500 //    OFF, n, (mA.) GOTO时的电流OFF 代表和 IRUN 一样.                  Option
+#define AXIS1_DRIVER_REVERSE          OFF //    OFF, ON 反转运动方向或者你也可以把电机线反着接.                   <-Often
 #define AXIS1_DRIVER_STATUS       TMC_SPI //    OFF, TMC_SPI, HIGH, LOW.  轮询驱动器状态/故障.                     Option
 
 #define AXIS1_LIMIT_MIN              -180 //  -180, n. n= -90..-270 (度). 赤道仪模式下的最小“时角”.                             Adjust
@@ -280,7 +280,7 @@
 
 // 辅助功能控制(AUXILIARY FEATURE CONTROL) ------------------------------ see https://onstep.groups.io/g/main/wiki/6-ConfigurationMaster#AUXILIARY
 // For additional infrequently used _PURPOSE options see Constants.h "various auxillary features"
-// 有关其他不常用的 _PURPOSE 选项，请参阅 Constants.h 中的“各种辅助功能”。
+// 有关其他不常用的 _PURPOSE 选项，请参阅 Constants.h 中的“各种辅助功能”
 #define FEATURE_LIST_DS               OFF //    OFF, temporarily set ON to list ds18b20 and ds2413 device serial numbers.     Adjust
 #define FEATURE1_NAME          "FEATURE1" // "FE..", Name of feature being controlled.                                        Adjust
 #define FEATURE1_PURPOSE              OFF //    OFF, SWITCH, ANALOG_OUT, DEW_HEATER, etc.                                     Option
