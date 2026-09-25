@@ -870,6 +870,52 @@
   #error "Configuration (Config.h): Setting TRACK_AUTOSTART invalid, use OFF or ON only."
 #endif
 
+#ifndef HOME_REQUIRED_ON_BOOT
+  #error "Configuration (Config.h): Setting HOME_REQUIRED_ON_BOOT must be present!"
+#elif HOME_REQUIRED_ON_BOOT != OFF && HOME_REQUIRED_ON_BOOT != ON
+  #error "Configuration (Config.h): Setting HOME_REQUIRED_ON_BOOT invalid, use OFF or ON only."
+#endif
+
+#ifndef HOME_REQUIRED_AFTER_LIMIT
+  #error "Configuration (Config.h): Setting HOME_REQUIRED_AFTER_LIMIT must be present!"
+#elif HOME_REQUIRED_AFTER_LIMIT != OFF && HOME_REQUIRED_AFTER_LIMIT != ON
+  #error "Configuration (Config.h): Setting HOME_REQUIRED_AFTER_LIMIT invalid, use OFF or ON only."
+#endif
+
+#ifndef MOTOR_HOLD_ON_BOOT
+  #error "Configuration (Config.h): Setting MOTOR_HOLD_ON_BOOT must be present!"
+#elif MOTOR_HOLD_ON_BOOT != OFF && MOTOR_HOLD_ON_BOOT != ON
+  #error "Configuration (Config.h): Setting MOTOR_HOLD_ON_BOOT invalid, use OFF or ON only."
+#endif
+
+#ifndef HOME_OFFSET_RATE
+  #error "Configuration (Config.h): Setting HOME_OFFSET_RATE must be present!"
+#elif HOME_OFFSET_RATE < 1 || HOME_OFFSET_RATE > 9
+  #error "Configuration (Config.h): Setting HOME_OFFSET_RATE invalid, use a guide-rate index from 1 through 9."
+#endif
+
+#ifndef HOME_FAST_RATE
+  #error "Configuration (Config.h): Setting HOME_FAST_RATE must be present!"
+#elif HOME_FAST_RATE < 1 || HOME_FAST_RATE > 9
+  #error "Configuration (Config.h): Setting HOME_FAST_RATE invalid, use a guide-rate index from 1 through 9."
+#endif
+
+#ifndef HOME_SLOW_RATE
+  #error "Configuration (Config.h): Setting HOME_SLOW_RATE must be present!"
+#elif HOME_SLOW_RATE < 1 || HOME_SLOW_RATE > 9
+  #error "Configuration (Config.h): Setting HOME_SLOW_RATE invalid, use a guide-rate index from 1 through 9."
+#elif HOME_FAST_RATE < HOME_SLOW_RATE
+  #error "Configuration (Config.h): HOME_FAST_RATE must be greater than or equal to HOME_SLOW_RATE."
+#endif
+
+#ifndef HOME_OFFSET_AXIS1
+  #error "Configuration (Config.h): Setting HOME_OFFSET_AXIS1 must be present!"
+#endif
+
+#ifndef HOME_OFFSET_AXIS2
+  #error "Configuration (Config.h): Setting HOME_OFFSET_AXIS2 must be present!"
+#endif
+
 #ifndef TRACK_REFRACTION_RATE_DEFAULT
   #error "Configuration (Config.h): Setting TRACK_REFRACTION_RATE_DEFAULT must be present!"
 #elif TRACK_REFRACTION_RATE_DEFAULT != OFF && TRACK_REFRACTION_RATE_DEFAULT != ON
@@ -1137,6 +1183,26 @@
     #define AXIS1_DRIVER_MICROSTEPS_GOTO AXIS1_DRIVER_MICROSTEPS
     #undef AXIS2_DRIVER_MICROSTEPS_GOTO
     #define AXIS2_DRIVER_MICROSTEPS_GOTO AXIS2_DRIVER_MICROSTEPS
+  #endif
+
+  // MaxESP3 等面向 SPI 设计的控制器会让 Axis1/Axis2 共用 M0/M1。
+  // 独立模式 TMC2209 若运行时切换细分，会同时改变两个物理驱动器，而两个
+  // 电机 ISR 的软件步长仍分别变化。两轴因此必须使用相同且固定的跟踪细分。
+  // TMC5160 SPI 由各自独立的 CS 选择，不受这一限制。
+  #if defined(AXIS12_DRIVER_MODE_PINS_SHARED) && (AXIS1_DRIVER_MODEL == TMC2209 || AXIS2_DRIVER_MODEL == TMC2209)
+    #if AXIS1_DRIVER_MODEL != TMC2209 || AXIS2_DRIVER_MODEL != TMC2209
+      #error "Configuration (Config.h): shared M0/M1 pins require TMC2209 on both Axis1 and Axis2."
+    #endif
+    #if AXIS1_DRIVER_MICROSTEPS != AXIS2_DRIVER_MICROSTEPS
+      #error "Configuration (Config.h): shared TMC2209 M0/M1 pins require equal Axis1/Axis2 tracking microsteps."
+    #endif
+    #if AXIS1_DRIVER_MICROSTEPS_GOTO != OFF || AXIS2_DRIVER_MICROSTEPS_GOTO != OFF
+      #warning "Shared standalone TMC2209 M0/M1 pins: runtime Goto microstep switching is disabled; tracking microsteps are used for all motion."
+      #undef AXIS1_DRIVER_MICROSTEPS_GOTO
+      #define AXIS1_DRIVER_MICROSTEPS_GOTO OFF
+      #undef AXIS2_DRIVER_MICROSTEPS_GOTO
+      #define AXIS2_DRIVER_MICROSTEPS_GOTO OFF
+    #endif
   #endif
 
 #else

@@ -71,6 +71,10 @@
 #define Axis2_DECAY    Axis2_M2     // Decay mode(衰变模式)
 #define Axis2_HOME         Aux6     // Sense home position(感知原点位置)
 
+// M0/M1 是共享的 MOSI/SCK 网络 SPI 驱动程序使用独立的 CS 引脚
+// 使用TMC2209且在脉冲模式下必须将两个轴都保持在同一个微步模式
+#define AXIS12_DRIVER_MODE_PINS_SHARED
+
 // For rotator stepper driver
 #define Axis3_EN            OFF     // No enable pin control (always enabled)
 #define Axis3_STEP          OFF     // Step(原始值IO2)

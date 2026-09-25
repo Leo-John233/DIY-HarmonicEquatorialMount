@@ -1,6 +1,9 @@
 // TMC2209 stepper driver validate
 
 #if AXIS1_DRIVER_MODEL == TMC2209
+  #if AXIS1_DRIVER_STATUS == TMC_SPI
+    #error "Configuration (Config.h): AXIS1_DRIVER_STATUS TMC_SPI is not available for standalone TMC2209; use OFF, HIGH, or LOW."
+  #endif
   #if AXIS1_DRIVER_MICROSTEPS != 8 && AXIS1_DRIVER_MICROSTEPS != 16 && AXIS1_DRIVER_MICROSTEPS != 32 && AXIS1_DRIVER_MICROSTEPS != 64
     #error "Configuration (Config.h): AXIS1_DRIVER_MICROSTEPS; TMC2209 invalid micro-step mode, use: 64,32,16,or 8"
   #endif
@@ -15,6 +18,9 @@
 #endif
 
 #if AXIS2_DRIVER_MODEL == TMC2209
+  #if AXIS2_DRIVER_STATUS == TMC_SPI
+    #error "Configuration (Config.h): AXIS2_DRIVER_STATUS TMC_SPI is not available for standalone TMC2209; use OFF, HIGH, or LOW."
+  #endif
   #if AXIS2_DRIVER_MICROSTEPS != 8 && AXIS2_DRIVER_MICROSTEPS != 16 && AXIS2_DRIVER_MICROSTEPS != 32 && AXIS2_DRIVER_MICROSTEPS != 64
     #error "Configuration (Config.h): AXIS2_DRIVER_MICROSTEPS; TMC2209 invalid micro-step mode, use: 64,32,16,or 8"
   #endif

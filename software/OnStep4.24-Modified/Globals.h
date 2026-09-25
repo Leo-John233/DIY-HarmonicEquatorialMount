@@ -311,7 +311,7 @@ volatile bool safetyLimitsOn         = false;
 bool axis1Enabled                    = false;
 bool axis2Enabled                    = false;
 bool syncToEncodersOnly              = false;
-enum StopSlewActions {SS_ALL_FAST, SS_LIMIT, SS_LIMIT_HARD, SS_LIMIT_AXIS1_MIN, SS_LIMIT_AXIS1_MAX, SS_LIMIT_AXIS2_MIN, SS_LIMIT_AXIS2_MAX};
+enum StopSlewActions {SS_ALL_FAST, SS_LIMIT, SS_LIMIT_HARD, SS_LIMIT_PHYSICAL, SS_LIMIT_AXIS1_MIN, SS_LIMIT_AXIS1_MAX, SS_LIMIT_AXIS2_MIN, SS_LIMIT_AXIS2_MAX};
                                         
 // Meridian flips ------------------------------------------------------------------------------------------------------------------
 #define MeridianFlipNever                 0

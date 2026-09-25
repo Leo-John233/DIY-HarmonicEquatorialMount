@@ -715,7 +715,7 @@ void processCommands() {
         const char *parkStatusCh = "pIPF";       reply[i++]=parkStatusCh[parkStatus];                        // not [p]arked, parking [I]n-progress, [P]arked, Park [F]ailed
         if (pecRecorded)                         reply[i++]='R';                                             // PEC data has been [R]ecorded
         if (syncToEncodersOnly)                  reply[i++]='e';                                             // sync to [e]ncoders only
-        if (atHome)                              reply[i++]='H';                                             // at [H]ome
+        if (atHome && positionReady())           reply[i++]='H';                                             // verified at [H]ome
         if (ppsSynced)                           reply[i++]='S';                                             // PPS [S]ync
         if (isPulseGuiding())                    reply[i++]='G';                                             // pulse [G]uide active
         if ((guideDirAxis1 || guideDirAxis2) && !isPulseGuiding())
@@ -1099,14 +1099,20 @@ void processCommands() {
       if (command[1] == 'F' && parameter[0] == 0)  {
         focuserRotatorSave();
         commandError=setHome(); boolReply=false;
-        if (commandError == CE_MOUNT_IN_MOTION) stopSlewingAndTracking(SS_ALL_FAST);
+        if (commandError == CE_MOUNT_IN_MOTION) {
+          if (isHoming()) requestHomeAbort(true);
+          stopSlewingAndTracking(SS_ALL_FAST);
+        }
       } else 
 // :hC#       Moves telescope to the home position
 //            Returns: Nothing
       if (command[1] == 'C' && parameter[0] == 0)  {
         focuserRotatorSave();
         commandError=goHome(true); boolReply=false;
-        if (commandError == CE_MOUNT_IN_MOTION) stopSlewingAndTracking(SS_ALL_FAST);
+        if (commandError == CE_MOUNT_IN_MOTION) {
+          if (isHoming()) requestHomeAbort(true);
+          stopSlewingAndTracking(SS_ALL_FAST);
+        }
       } else 
 // :hP#       Goto the Park Position
 //            Return: 0 on failure
@@ -1329,22 +1335,8 @@ void processCommands() {
       //            Returns: Nothing
       if ((command[1] == 'e' || command[1] == 'w') && parameter[0] == 0) {
 
-        // 手动移动不受位置可信状态限制；
-        // 只有启用 LIMIT_SENSE 时，才拦截已经锁死的物理限位危险方向。
-        bool blockedByLimitAxis1 = false;
-#if LIMIT_SENSE != OFF
-        blockedByLimitAxis1 =
-          ((command[1] == 'e' && Axis1_LimitLock == 1) ||
-           (command[1] == 'w' && Axis1_LimitLock == -1));
-#endif
-
-        if (blockedByLimitAxis1) {
-          boolReply = false;
-          commandError = CE_NONE;  // 静默拒绝危险方向，避免客户端刷错误
-        } else {
-          commandError=startGuideAxis1(command[1],currentGuideRate,GUIDE_TIME_LIMIT*1000,false);
-          boolReply=false;
-        }
+        commandError=startGuideAxis1(command[1],currentGuideRate,GUIDE_TIME_LIMIT*1000,false);
+        boolReply=false;
 
       } else
 
@@ -1352,22 +1344,8 @@ void processCommands() {
       //            Returns: Nothing
       if ((command[1] == 'n' || command[1] == 's') && parameter[0] == 0) {
 
-        // 手动移动不受位置可信状态限制；
-        // 只有启用 LIMIT_SENSE 时，才拦截已经锁死的物理限位危险方向。
-        bool blockedByLimitAxis2 = false;
-#if LIMIT_SENSE != OFF
-        blockedByLimitAxis2 =
-          ((command[1] == 'n' && Axis2_LimitLock == 1) ||
-           (command[1] == 's' && Axis2_LimitLock == -1));
-#endif
-
-        if (blockedByLimitAxis2) {
-          boolReply = false;
-          commandError = CE_NONE;
-        } else {
-          commandError=startGuideAxis2(command[1],currentGuideRate,GUIDE_TIME_LIMIT*1000,false);
-          boolReply=false;
-        }
+        commandError=startGuideAxis2(command[1],currentGuideRate,GUIDE_TIME_LIMIT*1000,false);
+        boolReply=false;
 
       } else
 // :Mp#  Move Telescope for sPiral search at current guide rate
@@ -1410,7 +1388,7 @@ void processCommands() {
 //              9=unspecified error
 if (command[1] == 'S' && parameter[0] == 0)  {
         // 所有 GOTO 入口统一由 validateGoto() 检查位置可信状态，
-        // 这里不再根据 HOME_SENSE 建立一套容易被其他命令绕过的旁路逻辑。
+        // 这里不再根据 HOME_SENSE 建立一套容易被其他命令绕过的旁路逻辑
         newTargetRA = origTargetRA;
         newTargetDec = origTargetDec;
 #if TELESCOPE_COORDINATES == TOPOCENTRIC
@@ -1491,19 +1469,27 @@ if (command[1] == 'S' && parameter[0] == 0)  {
 //            Returns: Nothing
       if (command[0] == 'Q') {
         if (command[1] == 0) {
+          if (isHoming()) requestHomeAbort(true);
           stopSlewingAndTracking(SS_ALL_FAST);
           boolReply=false; 
         } else
 // :Qe# Qw#   Halt east/westward Slews
 //            Returns: Nothing
         if ((command[1] == 'e' || command[1] == 'w') && parameter[0] == 0) {
-          stopGuideAxis1();
+          // Home 是双轴状态机，人工停止任一轴都应取消整个 Home
+          if (isHoming()) {
+            requestHomeAbort(true);
+            stopSlewingAndTracking(SS_ALL_FAST);
+          } else stopGuideAxis1();
           boolReply=false;
         } else
 // :Qn# Qs#   Halt north/southward Slews
 //            Returns: Nothing
         if ((command[1] == 'n' || command[1] == 's') && parameter[0] == 0) {
-          stopGuideAxis2();
+          if (isHoming()) {
+            requestHomeAbort(true);
+            stopSlewingAndTracking(SS_ALL_FAST);
+          } else stopGuideAxis2();
           boolReply=false;
         } else commandError=CE_CMD_UNKNOWN;
       } else
@@ -2090,13 +2076,13 @@ if (command[1] == 'S' && parameter[0] == 0)  {
 //                    1 on success
 
       if (command[0] == 'T' && parameter[0] == 0) {
-        // Tracking enable 同样只依赖位置是否可信，而不依赖是否安装传感器。
+        // Tracking enable 同样只依赖位置是否可信，而不依赖是否安装传感器
         const bool trackingBlockedUntilRecovery =
-          (command[1] == 'e' && (!mountPositionTrusted || positionRecoveryRequired));
+          (command[1] == 'e' && !positionReady());
 
         if (trackingBlockedUntilRecovery) {
-          // 保持 boolReply=true，让命令处理器立即返回字符 '0'。
-          // 旧逻辑提前 return 且 suppress frame，ASCOM/NINA 只能等待到超时。
+          // 保持 boolReply=true，让命令处理器立即返回字符 '0'
+          // 旧逻辑提前 return 且 suppress frame，ASCOM/NINA 只能等待到超时
           commandError = CE_SLEW_ERR_IN_STANDBY;
         } else {
 #if MOUNT_TYPE != ALTAZM

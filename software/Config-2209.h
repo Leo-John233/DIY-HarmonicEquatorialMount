@@ -2,9 +2,9 @@
 // Configuration for OnStep
 
 /*
- *          For more information on setting OnStep up see http://www.stellarjourney.com/index.php?r=site/equipment_onstep 
+ *          For more information on setting OnStep up see http://www.stellarjourney.com/index.php?r=site/equipment_onstep
  *                      and join the OnStep Groups.io at https://groups.io/g/onstep
- * 
+ *
  *           *** Read the compiler warnings and errors, they are there to help guard against invalid configurations ***
 */
 
@@ -64,7 +64,7 @@
                                           //         BMP280 (I2C 0x77,) BMP280_0x76, BMP280_SPI (see pinmap for CS.)
                                           //         BME280 or BMP280 for temperature, pressure.  BME280 for humidity also.
                                           //         BME280 或 BMP280 用于测量温度和压力。BME280 也可用于测量湿度。
-                                          
+
 #define TELESCOPE_TEMPERATURE         OFF //    OFF, DS1820, n. Where n is the DS1820 s/n for focuser temperature.            Adjust
                                           //    OFF, DS1820, n. n是DS1820的序列号，用于检测调焦器处的温度（做温补）
 
@@ -75,12 +75,16 @@
 #define HOME_SENSE_STATE_AXIS2        LOW //   HIGH, State when clockwise of home position, as seen from above. Rev. w/LOW.   Adjust
                                           //   HIGH, 从上面看，当轴位于原点顺时针方向时的电平状态。用LOW反转
                                           //   Signal state reverses when travel moves ccw past the home position.
-                                          //   当转动越过原点逆时针方向时，信号状态会反转       
+                                          //   当转动越过原点逆时针方向时，信号状态会反转
 
-// 偏置零位配置(由于传感器感应区域宽度或传感器安装位置不在原点，可能需要设置偏置角度)                            
+// 自动回零速度设置
+#define HOME_FAST_RATE                  9 //  1..9；8=半最大速度，9=最大速度
+#define HOME_SLOW_RATE                  7 //  1..9；7=48倍恒星速度
+
+// 偏置零位配置(由于传感器感应区域宽度或传感器安装位置不在原点，可能需要设置偏置角度)
 #define HOME_OFFSET_AXIS1             0   //  n.n (度), 赤经/方位轴的偏置角度（支持正负号改变方向，0为不偏置）
 #define HOME_OFFSET_AXIS2             0   //  n.n (度), 赤纬/俯仰轴的偏置角度（支持正负号改变方向，0为不偏置）
-#define HOME_OFFSET_RATE              7   //  7, n. 偏置阶段使用的速度档位                            
+#define HOME_OFFSET_RATE              7   //  7, n. 偏置阶段使用的速度档位
                                           //  可选值通常为 1..9 档。
                                           //  提示：7 = 48x 恒星速（推荐，精找速度），8 = 半最大速，9 = 全速（Goto速度）
 
@@ -168,10 +172,12 @@
 #define STEP_WAVE_FORM             SQUARE // SQUARE, PULSE Step signal wave form faster rates. SQUARE best signal integrity.  Adjust
                                           // SQUARE, PULSE 高速时的脉冲波形。SQUARE (方波) 信号最稳
 
-// 开机电机保持
+// 回零策略（与当前主配置一致）及开机电机保持
+#define HOME_REQUIRED_ON_BOOT          ON // ON：开机后须先 Home/Set Home 才能正常 GOTO/跟踪
+#define HOME_REQUIRED_AFTER_LIMIT      ON // ON：物理限位后须 Home/Set Home 恢复
 #define MOTOR_HOLD_ON_BOOT            OFF //    OFF, ON 只使能驱动器，不启动 tracking，不建立 home 坐标
 
-// 步进驱动器型号说明 (也可以看 ~/OnStep/src/sd_drivers/Models.h 获取更多型号): 
+// 步进驱动器型号说明 (也可以看 ~/OnStep/src/sd_drivers/Models.h 获取更多型号):
 // A4988, DRV8825, LV8729, S109, SSS TMC2209*, TMC2130* **, 和 TMC5160* ***
 // * = 加上 _QUIET 后缀 (例如 "TMC2130_QUIET") 表示开启 stealthChop 静音跟踪模式
 // ** = SSS TMC2130 如果你想软件设置电流(mA)，要把Vref电位器调到2.5V，而不是像通常那样调Vref来定电流。

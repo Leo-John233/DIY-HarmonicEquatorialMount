@@ -1,6 +1,6 @@
 // ---------------------------------------------------------------------------------------------------------------------------------
 // Configuration for OnStep
-
+//测试
 /*
  *          For more information on setting OnStep up see http://www.stellarjourney.com/index.php?r=site/equipment_onstep 
  *                      and join the OnStep Groups.io at https://groups.io/g/onstep
@@ -77,11 +77,14 @@
                                           //   HIGH, 从上面看，当轴位于原点顺时针方向时的电平状态。用LOW反转
                                           //   Signal state reverses when travel moves ccw past the home position.
                                           //   当转动越过原点逆时针方向时，信号状态会反转       
+// 自动回零速度设置
+#define HOME_FAST_RATE                  9 //  1..9；8=半最大速度，9=最大速度
+#define HOME_SLOW_RATE                  7 //  1..9；推荐7=48倍恒星速度
 // 偏置零位配置                            
-#define HOME_OFFSET_AXIS1          -1.5   //  n.n (度), 赤经/方位轴的偏置角度（支持正负号改变方向，0为不偏置）
-#define HOME_OFFSET_AXIS2             1   //  n.n (度), 赤纬/俯仰轴的偏置角度（支持正负号改变方向，0为不偏置）
-#define HOME_OFFSET_RATE              8   //  7, n. 偏置阶段使用的速度档位                             <- 新增
-                                          //  可选值通常为 1..9 档。
+#define HOME_OFFSET_AXIS1            -1.5 //  n.n (度), 赤经/方位轴的偏置角度（支持正负号改变方向，0为不偏置）
+#define HOME_OFFSET_AXIS2               1 //  n.n (度), 赤纬/俯仰轴的偏置角度（支持正负号改变方向，0为不偏置）
+#define HOME_OFFSET_RATE                8 //  7, n. 偏置阶段使用的速度档位
+                                          //  可选值通常为 1..9 档
                                           //  提示：7 = 48x 恒星速（推荐，精找速度），8 = 半最大速，9 = 全速（Goto速度）
 
 #define LIMIT_SENSE             ON_PULLUP //    OFF, ON*, ON_PULLUP、ON_PULLUND limit sense switch close to Gnd stops gotos and/or tracking.         Option
@@ -168,9 +171,13 @@
 // 运动控制(MOTION CONTROL) ---------------------------------------------- see https://onstep.groups.io/g/main/wiki/Configuration-Mount#MOTION
 #define STEP_WAVE_FORM             SQUARE // SQUARE, PULSE Step signal wave form faster rates. SQUARE best signal integrity.  Adjust
                                           // SQUARE, PULSE 高速时的脉冲波形。SQUARE (方波) 信号最稳
-// 开机电机保持
-#define MOTOR_HOLD_ON_BOOT             ON // 只使能驱动器，不启动 tracking，不建立可信坐标
-                                               // HOME_SENSE OFF 时需人工置于 Home 后执行 Set Home，才能 GOTO/Tracking
+// 回零策略与电机保持
+#define HOME_REQUIRED_ON_BOOT          ON // ON：开机后须先 Home/Set Home 才能正常 GOTO/跟踪；
+                                          // OFF：沿用原版启动位置假定
+#define HOME_REQUIRED_AFTER_LIMIT      ON // ON：物理限位后须 Home/Set Home 恢复；
+                                          // OFF：限位仍停止运动，但不强制重新回零
+#define MOTOR_HOLD_ON_BOOT             ON // ON：开机仅使能电机保持；
+                                          // OFF：不额外使能电机（不改变上述回零策略）
 
 // 步进驱动器型号说明 (也可以看 ~/OnStep/src/sd_drivers/Models.h 获取更多型号): 
 // A4988, DRV8825, LV8729, S109, SSS TMC2209*, TMC2130* **, 和 TMC5160* ***
@@ -194,9 +201,9 @@
 #define AXIS1_DRIVER_REVERSE          OFF //    OFF, ON 反转运动方向。或者你也可以把电机线反着接.                   <-Often
 #define AXIS1_DRIVER_STATUS       TMC_SPI //    OFF, TMC_SPI, HIGH, LOW.  轮询驱动器状态/故障.                     Option
 
-#define AXIS1_LIMIT_MIN              -110 //  -180, n. n= -90..-270 (度). 赤道仪模式下的最小“时角”.                             Adjust
+#define AXIS1_LIMIT_MIN              -180 //  -180, n. n= -90..-270 (度). 赤道仪模式下的最小“时角”.                             Adjust
                                           //        n. n=-180..-360 (度). 经纬仪模式下的最小方位角.
-#define AXIS1_LIMIT_MAX               110 //   180, n. n=  90.. 270 (度). 赤道仪模式下的最大“时角”.                             Adjust
+#define AXIS1_LIMIT_MAX               180 //   180, n. n=  90.. 270 (度). 赤道仪模式下的最大“时角”.                             Adjust
                                           //        n. n= 180.. 360 (度). 经纬仪模式下的最大方位角.
 
 // 轴 2：赤纬 / 俯仰(AXIS2 DEC/AL)T

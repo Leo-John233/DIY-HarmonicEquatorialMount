@@ -169,7 +169,7 @@ void initPins() {
 
 #if AXIS2_DRIVER_STATUS == LOW
   pinMode(Axis2_FAULT,INPUT_PULLUP);
-#elif AXIS1_DRIVER_STATUS == HIGH
+#elif AXIS2_DRIVER_STATUS == HIGH
   #ifdef INPUT_PULLDOWN
     pinMode(Axis2_FAULT,INPUT_PULLDOWN);
   #else
